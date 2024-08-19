@@ -1,0 +1,44 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "eslint --fix .",
+    "dev": "nodemon"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.14",
+    "winston": "^3.14.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/joi": "^17.2.3",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.4.0",
+    "@types/nodemailer": "^6.4.15",
+    "eslint": "^9.9.0",
+    "globals": "^15.9.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "prisma": "^5.18.0",
+    "ts-jest": "^29.2.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.1.0"
+  }
+}
