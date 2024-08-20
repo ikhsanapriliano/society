@@ -3,6 +3,7 @@ import cors from "cors";
 import AuthRoutes from "./routes/auth.route";
 import { ErrorHandler, NotFoundHandler } from "./middlewares/error.middleware";
 import UserRoutes from "./routes/user.route";
+import RoomRoutes from "./routes/room.route";
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.use("/api/auth", AuthRoutes);
 app.use("/api/users", UserRoutes);
+app.use("/api/rooms", RoomRoutes);
 app.use("*", NotFoundHandler);
 
 app.use(ErrorHandler);
