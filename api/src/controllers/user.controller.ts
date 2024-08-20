@@ -1,8 +1,24 @@
 import { NextFunction, Request, Response } from "express";
 import { UpdateUserPayload } from "../types/user.type";
 import { NewResponse } from "../utils/response.util";
-import { Delete, Update } from "../services/user.service";
+import { Delete, FindMany, Update } from "../services/user.service";
 import { UpdateUserValidation } from "../validations/user.validation";
+
+export const FindManyHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<Response | undefined> => {
+    try {
+        const username = req.query.username as string | undefined;
+        const email = req.query.email as string | undefined;
+
+        const data = await FindMany(username, email);
+        return NewResponse(res, 200, data);
+    } catch (error) {
+        next(error);
+    }
+};
 
 export const UpdateHandler = async (
     req: Request,
