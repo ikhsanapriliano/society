@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { Register } from "../services/auth.service";
-import { RegisterPayload } from "../types/auth.type";
+import { Login, Register } from "../services/auth.service";
+import { LoginPayload, RegisterPayload } from "../types/auth.type";
 import { NewResponse } from "../utils/response.util";
+import {
+    LoginValidation,
+    RegisterValidation,
+} from "../validations/auth.validation";
 
 export const RegisterHandler = async (
     req: Request,
@@ -9,10 +13,29 @@ export const RegisterHandler = async (
     next: NextFunction
 ): Promise<Response | undefined> => {
     try {
-        const payload = req.body;
+        const payload: RegisterPayload = req.body;
+        const { value, error } = RegisterValidation(payload);
+        if (error !== undefined) throw new Error(`400:${error.message}`);
 
-        await Register(payload as RegisterPayload);
+        await Register(value);
         return NewResponse(res, 201);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const LoginHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<Response | undefined> => {
+    try {
+        const payload: LoginPayload = req.body;
+        const { value, error } = LoginValidation(payload);
+        if (error !== undefined) throw new Error(`400:${error.message}`);
+
+        const data = await Login(value);
+        return NewResponse(res, 200, data);
     } catch (error) {
         next(error);
     }

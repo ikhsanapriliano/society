@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { SuccessResponse } from "../types/response.type";
+import { ErrorResponse, SuccessResponse } from "../types/response.type";
 
 export const NewResponse = <T>(
     res: Response,
@@ -13,4 +13,17 @@ export const NewResponse = <T>(
     };
 
     return res.status(status).json(response);
+};
+
+export const SendErrorResponse = (
+    res: Response,
+    status: number,
+    message: string
+): void => {
+    const response: ErrorResponse = {
+        status,
+        message,
+    };
+
+    res.status(status).json(response);
 };
