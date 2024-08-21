@@ -9,12 +9,20 @@ import { GenerateToken } from "../utils/jwt.util";
 import { Claims } from "../types/jwt.type";
 
 export const Register = async (payload: RegisterPayload): Promise<void> => {
-    const user = await prisma.user.findUnique({
-        where: { username: payload.username, email: payload.email },
+    let user = await prisma.user.findUnique({
+        where: { username: payload.username },
     });
 
     if (user) {
-        throw new Error("400:Username or email already exist.");
+        throw new Error("400:Username already exist.");
+    }
+
+    user = await prisma.user.findUnique({
+        where: { email: payload.email },
+    });
+
+    if (user) {
+        throw new Error("400:Email already exist.");
     }
 
     payload.password = HashPassword(payload.password);

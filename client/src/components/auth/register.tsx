@@ -1,20 +1,14 @@
-import { AuthState, setAuth } from "@/slices/auth"
 import { setLocation } from "@/slices/sidebar"
-import { JwtClaims, LoginPayload, LoginResponse } from "@/types/auth"
-import { post } from "@/utils/axios"
-import { jwtDecode } from "jwt-decode"
-import { useRouter } from "next/navigation"
-import { FormEvent, useState } from "react"
 import { useDispatch } from "react-redux"
 import { motion } from "framer-motion"
+import { FormEvent, useState } from "react"
 import { handleError } from "@/utils/error"
+import { post } from "@/utils/axios"
+import { RegisterPayload } from "@/types/auth"
 
-const Login = () => {
+const Register = () => {
     const dispatch = useDispatch()
-    const [inputs, setInputs] = useState({
-        email: "ikhsan@gmail.com",
-        password: "12345678"
-    })
+    const [inputs, setInputs] = useState({ username: "", email: "", password: "", confirmPassword: "" })
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState({ isError: false, message: "" })
 
@@ -28,18 +22,16 @@ const Login = () => {
             setIsLoading(true)
             setError({ isError: false, message: "" })
 
-            const payload: LoginPayload = {
+            const payload: RegisterPayload = {
+                username: inputs.username,
                 email: inputs.email,
-                password: inputs.password
+                password: inputs.password,
+                confirmPassword: inputs.confirmPassword
             }
 
-            const data = await post<LoginPayload, LoginResponse>("/auth/login", undefined, payload) as LoginResponse
-            const token = data.token
-            localStorage.setItem("token", token)
-            const { userId, photo }: JwtClaims = jwtDecode(token)
-            const authPayload: AuthState = { token, userId, photo }
-            dispatch(setAuth(authPayload))
-            dispatch(setLocation("history"))
+            await post<RegisterPayload, undefined>("/auth/register", undefined, payload)
+            dispatch(setLocation("/login"))
+
             setIsLoading(false)
         } catch (error: Error | unknown) {
             const message = handleError(error, dispatch) as string
@@ -56,28 +48,35 @@ const Login = () => {
             <h1 className="font-bold text-[24px]">society</h1>
             <div className="h-full flex justify-center items-center w-full">
                 <form onSubmit={(e) => { handleSubmit(e) }} className="px-5 w-full">
-                    <h2 className="font-bold text-[20px]">login</h2>
-                    <div className="flex flex-col mt-7">
-                        <label htmlFor="email" className="font-semibold">email</label>
-                        <input id="email" onChange={(e) => { setInputs(prev => ({ ...prev, email: e.target.value })) }} value={inputs.email} type="text" autoComplete="email" className="h-[40px] rounded-md bg-third mt-2 px-2" />
+                    <h2 className="font-bold text-[20px]">register</h2>
+                    <div className="flex flex-col mt-2">
+                        <label htmlFor="username" className="font-semibold">username</label>
+                        <input id="username" onChange={(e) => { setInputs(prev => ({ ...prev, username: e.target.value })) }} value={inputs.username} type="text" autoComplete="off" className="h-[40px] rounded-md bg-third mt-2 px-2" />
                     </div>
-                    <div className="flex flex-col mt-7">
+                    <div className="flex flex-col mt-2">
+                        <label htmlFor="email" className="font-semibold">email</label>
+                        <input id="email" onChange={(e) => { setInputs(prev => ({ ...prev, email: e.target.value })) }} value={inputs.email} type="text" autoComplete="off" className="h-[40px] rounded-md bg-third mt-2 px-2" />
+                    </div>
+                    <div className="flex flex-col mt-2">
                         <label htmlFor="password" className="font-semibold">password</label>
                         <input id="password" onChange={(e) => { setInputs(prev => ({ ...prev, password: e.target.value })) }} value={inputs.password} type="password" autoComplete="off" className="h-[40px] rounded-md bg-third mt-2 px-2" />
                     </div>
-                    <button type="button" className="text-end w-full text-sm mt-2 underline">forgot password?</button>
+                    <div className="flex flex-col mt-2">
+                        <label htmlFor="cpassword" className="font-semibold">confirm password</label>
+                        <input id="cpassword" onChange={(e) => { setInputs(prev => ({ ...prev, confirmPassword: e.target.value })) }} value={inputs.confirmPassword} type="password" autoComplete="off" className="h-[40px] rounded-md bg-third mt-2 px-2" />
+                    </div>
                     {error.isError && <p className="text-sm font-light w-full text-end text-red-500 mt-1">Error: {error.message}</p>}
-                    <button type="submit" className={`bg-fifth w-full h-[40px] rounded-md mt-7 hover:opacity-70 ${isLoading ? "opacity-70" : "opacity-100"} duration-150`}>
+                    <button type="submit" className="bg-fifth w-full h-[40px] rounded-md mt-5 hover:opacity-70 duration-150">
                         {
                             isLoading ?
                                 <i className="fa-solid fa-spinner fa-spin"></i>
                                 :
-                                "login"
+                                "register"
                         }
                     </button>
-                    <div className="w-full text-center text-sm mt-2">{"don't have account ? "}
+                    <div className="w-full text-center text-sm mt-2">{"already have account ? "}
                         <span>
-                            <button onClick={() => { switchLocation("register") }} type="button" className="underline">register</button>
+                            <button onClick={() => { switchLocation("login") }} type="button" className={`underline hover:opacity-70 duration-150`}>login</button>
                         </span>
                     </div>
                 </form>
@@ -86,4 +85,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Register
