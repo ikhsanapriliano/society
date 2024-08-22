@@ -1,20 +1,16 @@
-import { setLocation } from "@/slices/sidebar"
 import { useDispatch } from "react-redux"
 import { motion } from "framer-motion"
 import { FormEvent, useState } from "react"
 import { handleError } from "@/utils/error"
 import { post } from "@/utils/axios"
 import { RegisterPayload } from "@/types/auth"
+import Link from "next/link"
 
 const Register = () => {
     const dispatch = useDispatch()
     const [inputs, setInputs] = useState({ username: "", email: "", password: "", confirmPassword: "" })
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState({ isError: false, message: "" })
-
-    const switchLocation = (loc: string) => {
-        dispatch(setLocation(loc))
-    }
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         try {
@@ -30,7 +26,6 @@ const Register = () => {
             }
 
             await post<RegisterPayload, undefined>("/auth/register", undefined, payload)
-            dispatch(setLocation("/login"))
 
             setIsLoading(false)
         } catch (error: Error | unknown) {
@@ -76,7 +71,7 @@ const Register = () => {
                     </button>
                     <div className="w-full text-center text-sm mt-2">{"already have account ? "}
                         <span>
-                            <button onClick={() => { switchLocation("login") }} type="button" className={`underline hover:opacity-70 duration-150`}>login</button>
+                            <Link href={"/"} className={`underline hover:opacity-70 duration-150`}>login</Link>
                         </span>
                     </div>
                 </form>

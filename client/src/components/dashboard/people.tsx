@@ -6,7 +6,8 @@ import { handleError } from "@/utils/error"
 import Image from "next/image"
 import { FormEvent, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import PeopleDetail from "./peopledetail"
+import { setPeopleDetail } from "@/slices/peopledetail"
+import { useRouter } from "next/navigation"
 
 const People = () => {
     const dispatch = useDispatch()
@@ -14,7 +15,11 @@ const People = () => {
     const [people, setPeople] = useState<PeopleResponse[]>([])
     const [inputs, setInputs] = useState({ value: "", type: "username" })
     const [isLoading, setIsLoading] = useState(true)
-    const [details, setDetails] = useState<PeopleResponse | null>(null)
+    const router = useRouter()
+
+    useEffect(() => {
+        handleSearch()
+    }, [])
 
     const handleSearch = async (e?: FormEvent<HTMLFormElement>) => {
         try {
@@ -36,10 +41,10 @@ const People = () => {
         }
     }
 
-
-    useEffect(() => {
-        handleSearch()
-    }, [])
+    const handleDetail = (item: PeopleResponse) => {
+        dispatch(setPeopleDetail(item))
+        router.push(`/people/${item.id}`)
+    }
 
     return (
         <section className="w-full h-[90%] overflow-hidden p-5 flex flex-col relative">
@@ -65,7 +70,7 @@ const People = () => {
                             <>
                                 {
                                     people.map((item, index) => (
-                                        <button onClick={() => { setDetails(item) }} key={index} className="flex p-5 gap-5 w-full text-left hover:bg-third">
+                                        <button onClick={() => { handleDetail(item) }} key={index} className="flex p-5 gap-5 w-full text-left hover:bg-third">
                                             <div className="flex-shrink-0 w-[50px] h-[50px] rounded-full overflow-hidden">
                                                 <Image src={"/" + item.photo} alt="photo" width={0} height={0} sizes="100vw" className="w-full h-auto" />
                                             </div>
@@ -76,7 +81,6 @@ const People = () => {
                                         </button>
                                     ))
                                 }
-                                {details && <PeopleDetail user={details} setDetails={setDetails} />}
                             </>
                 }
             </div>

@@ -9,14 +9,16 @@ import Dashboard from "./dashboard"
 import React from "react"
 import People from "./dashboard/people"
 import Profile from "./dashboard/profile"
+import { usePathname } from "next/navigation"
+import PeopleDetail from "./dashboard/peopledetail"
 
 const Sidebar = () => {
-  const location = useSelector((state: RootState) => state.sidebar.location)
   const userId = useSelector((state: RootState) => state.auth.userId)
+  const pathname = usePathname()
 
   const renderAuthComponent = () => {
-    switch (location) {
-      case "register":
+    switch (pathname) {
+      case "/register":
         return <Register />
       default:
         return <Login />
@@ -26,15 +28,19 @@ const Sidebar = () => {
   const renderDashboardComponent = () => {
     let component: React.JSX.Element
 
-    switch (location) {
-      case "people":
+    switch (pathname) {
+      case "/people":
         component = <People />
         break
-      case "profile":
+      case "/profile":
         component = <Profile />
         break
       default:
-        component = <HistoryChat />
+        if (pathname.includes("people")) {
+          component = <PeopleDetail />
+        } else {
+          component = <HistoryChat />
+        }
     }
 
     return (

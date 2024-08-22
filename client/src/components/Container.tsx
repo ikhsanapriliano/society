@@ -7,7 +7,6 @@ import { jwtDecode } from "jwt-decode";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { AuthState, clearAuth, setAuth } from "@/slices/auth";
-import { setLocation } from "@/slices/sidebar";
 
 const Container = ({ children }: Readonly<{
     children: React.ReactNode;
@@ -34,7 +33,6 @@ const Container = ({ children }: Readonly<{
             const { userId, photo }: JwtClaims = jwtDecode(token)
             const payload: AuthState = { token, userId, photo }
             dispatch(setAuth(payload))
-            dispatch(setLocation("history"))
             setIsLoading(false)
         } catch (error) {
             console.log(error)

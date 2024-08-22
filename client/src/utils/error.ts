@@ -1,5 +1,4 @@
 import { clearAuth } from "@/slices/auth";
-import { setLocation } from "@/slices/sidebar";
 import { Dispatch } from "@reduxjs/toolkit";
 
 export const handleError = (
@@ -16,7 +15,6 @@ export const handleError = (
         case "401" || "403":
             localStorage.removeItem("token");
             dispatch(clearAuth());
-            dispatch(setLocation("/login"));
             window.location.reload();
             break;
         case "400":

@@ -1,5 +1,4 @@
 import { AuthState, setAuth } from "@/slices/auth"
-import { setLocation } from "@/slices/sidebar"
 import { JwtClaims, LoginPayload, LoginResponse } from "@/types/auth"
 import { post } from "@/utils/axios"
 import { jwtDecode } from "jwt-decode"
@@ -8,6 +7,7 @@ import { FormEvent, useState } from "react"
 import { useDispatch } from "react-redux"
 import { motion } from "framer-motion"
 import { handleError } from "@/utils/error"
+import Link from "next/link"
 
 const Login = () => {
     const dispatch = useDispatch()
@@ -17,10 +17,6 @@ const Login = () => {
     })
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState({ isError: false, message: "" })
-
-    const switchLocation = (loc: string) => {
-        dispatch(setLocation(loc))
-    }
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         try {
@@ -39,7 +35,6 @@ const Login = () => {
             const { userId, photo }: JwtClaims = jwtDecode(token)
             const authPayload: AuthState = { token, userId, photo }
             dispatch(setAuth(authPayload))
-            dispatch(setLocation("history"))
             setIsLoading(false)
         } catch (error: Error | unknown) {
             const message = handleError(error, dispatch) as string
@@ -77,7 +72,7 @@ const Login = () => {
                     </button>
                     <div className="w-full text-center text-sm mt-2">{"don't have account ? "}
                         <span>
-                            <button onClick={() => { switchLocation("register") }} type="button" className="underline">register</button>
+                            <Link href={"/register"} className="underline">register</Link>
                         </span>
                     </div>
                 </form>

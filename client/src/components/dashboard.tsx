@@ -1,8 +1,9 @@
 import { clearAuth } from "@/slices/auth";
-import { setLocation } from "@/slices/sidebar";
 import { RootState } from "@/store/store";
 import { motion } from "framer-motion"
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
 const Dashboard = ({ children }: Readonly<{
@@ -10,11 +11,7 @@ const Dashboard = ({ children }: Readonly<{
 }>) => {
     const dispatch = useDispatch()
     const photo = useSelector((state: RootState) => state.auth.photo) as string
-    const location = useSelector((state: RootState) => state.sidebar.location)
-
-    const switchLocation = (loc: string) => {
-        dispatch(setLocation(loc))
-    }
+    const pathname = usePathname()
 
     const handleLogout = () => {
         localStorage.removeItem("token")
@@ -29,13 +26,13 @@ const Dashboard = ({ children }: Readonly<{
             className="flex w-full h-full bg-second">
             <nav className="bg-first h-full w-[15%] flex flex-col justify-between items-center p-5">
                 <div className="flex flex-col gap-5">
-                    <button onClick={() => { switchLocation("history") }} className={`w-[50px] h-[50px] flex justify-center items-center ${location === "history" ? "bg-third" : "bg-first"} rounded-full text-[20px]`}><i className="fa-solid fa-comment-dots"></i></button>
-                    <button onClick={() => { switchLocation("people") }} className={`w-[50px] h-[50px] flex justify-center items-center ${location === "people" ? "bg-third" : "bg-first"} rounded-full text-[20px]`}><i className="fa-solid fa-user-group"></i></button>
+                    <Link href={"/"} className={`w-[50px] h-[50px] flex justify-center items-center ${pathname === "/" ? "bg-third" : "bg-first"} rounded-full text-[20px]`}><i className="fa-solid fa-comment-dots"></i></Link>
+                    <Link href={"/people"} className={`w-[50px] h-[50px] flex justify-center items-center ${pathname.includes("/people") ? "bg-third" : "bg-first"} rounded-full text-[20px]`}><i className="fa-solid fa-user-group"></i></Link>
                 </div>
                 <div className="flex flex-col gap-5">
-                    <button onClick={() => { switchLocation("profile") }} className={`w-[50px] h-[50px] flex justify-center items-center rounded-full overflow-hidden p-1 ${location === "profile" ? "bg-third" : "bg-first"}`}>
+                    <Link href={"/profile"} className={`w-[50px] h-[50px] flex justify-center items-center rounded-full overflow-hidden p-1 ${pathname === "/profile" ? "bg-third" : "bg-first"}`}>
                         <Image src={"/" + photo} alt="profile" width={0} height={0} sizes="100vw" className="w-full h-auto rounded-full" />
-                    </button>
+                    </Link>
                     <button onClick={handleLogout} className="w-[50px] h-[50px] flex justify-center items-center rounded-full text-[20px] text-red-600"><i className="fa-solid fa-right-from-bracket"></i></button>
                 </div>
             </nav>
