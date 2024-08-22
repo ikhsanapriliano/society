@@ -8,6 +8,9 @@ import { useDispatch } from "react-redux"
 import { motion } from "framer-motion"
 import { handleError } from "@/utils/error"
 import Link from "next/link"
+import { RegisterWebsocket, WebsocketMessage } from "@/types/websocket"
+import { ChatFormat } from "@/types/chat"
+import { setMessage, setSocket } from "@/slices/websocket"
 
 const Login = () => {
     const dispatch = useDispatch()
@@ -35,6 +38,16 @@ const Login = () => {
             const { userId, photo }: JwtClaims = jwtDecode(token)
             const authPayload: AuthState = { token, userId, photo }
             dispatch(setAuth(authPayload))
+
+            const ws = new WebSocket("ws://localhost:3000")
+            const registerSocket: RegisterWebsocket = { userId: userId }
+            ws.onopen = (_event) => { ws.send(JSON.stringify(registerSocket)) }
+            ws.onmessage = (event) => {
+                const data: ChatFormat = (JSON.parse(event.data) as WebsocketMessage).data as ChatFormat
+                dispatch(setMessage(data))
+            }
+            dispatch(setSocket(ws))
+
             setIsLoading(false)
         } catch (error: Error | unknown) {
             const message = handleError(error, dispatch) as string

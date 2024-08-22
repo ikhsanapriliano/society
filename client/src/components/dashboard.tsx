@@ -11,6 +11,7 @@ const Dashboard = ({ children }: Readonly<{
     children: React.ReactNode;
 }>) => {
     const dispatch = useDispatch()
+    const socket = useSelector((state: RootState) => state.websocket.socket)
     const photo = useSelector((state: RootState) => state.auth.photo) as string
     const pathname = usePathname()
     const router = useRouter()
@@ -18,6 +19,7 @@ const Dashboard = ({ children }: Readonly<{
     const handleLogout = () => {
         localStorage.removeItem("token")
         dispatch(clearAuth())
+        socket?.close()
         router.push("/")
     }
 

@@ -38,6 +38,7 @@ export const Register = async (payload: RegisterPayload): Promise<void> => {
 
         await prisma.profile.create({
             data: {
+                photo: "/profile.jpg",
                 userId: id,
                 bio: "",
             },

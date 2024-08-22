@@ -5,12 +5,14 @@ import { handleError } from "@/utils/error"
 import { post } from "@/utils/axios"
 import { RegisterPayload } from "@/types/auth"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 const Register = () => {
     const dispatch = useDispatch()
     const [inputs, setInputs] = useState({ username: "", email: "", password: "", confirmPassword: "" })
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState({ isError: false, message: "" })
+    const router = useRouter()
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         try {
@@ -26,7 +28,7 @@ const Register = () => {
             }
 
             await post<RegisterPayload, undefined>("/auth/register", undefined, payload)
-
+            router.push("/")
             setIsLoading(false)
         } catch (error: Error | unknown) {
             const message = handleError(error, dispatch) as string

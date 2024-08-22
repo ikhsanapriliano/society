@@ -38,3 +38,8 @@ export interface UserRoomResponse {
     photo: string;
     message?: string;
 }
+
+export interface ChatFormat {
+    senderId: string;
+    message: string;
+}
