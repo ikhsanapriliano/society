@@ -5,7 +5,7 @@ import "./globals.css";
 import Script from "next/script";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
-import Container from "@/components/Container";
+import Container from "@/components/container";
 
 const inter = Inter({ subsets: ["latin"] });
 

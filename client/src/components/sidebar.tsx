@@ -5,6 +5,10 @@ import { RootState } from "@/store/store"
 import Register from "./auth/register"
 import Login from "./auth/login"
 import HistoryChat from "./dashboard/history"
+import Dashboard from "./dashboard"
+import React from "react"
+import People from "./dashboard/people"
+import Profile from "./dashboard/profile"
 
 const Sidebar = () => {
   const location = useSelector((state: RootState) => state.sidebar.location)
@@ -20,12 +24,24 @@ const Sidebar = () => {
   }
 
   const renderDashboardComponent = () => {
+    let component: React.JSX.Element
+
     switch (location) {
-      case "register":
-        return <Register />
+      case "people":
+        component = <People />
+        break
+      case "profile":
+        component = <Profile />
+        break
       default:
-        return <HistoryChat />
+        component = <HistoryChat />
     }
+
+    return (
+      <Dashboard>
+        {component}
+      </Dashboard>
+    )
   }
 
   return (

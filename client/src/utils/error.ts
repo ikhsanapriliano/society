@@ -11,17 +11,18 @@ export const handleError = (
     switch (splitted[0]) {
         case "500":
             console.log(error);
-            window.location.href = "/";
+            window.location.reload();
             break;
         case "401" || "403":
+            localStorage.removeItem("token");
             dispatch(clearAuth());
             dispatch(setLocation("/login"));
-            window.location.href = "/";
+            window.location.reload();
             break;
         case "400":
             return splitted[1];
         default:
             console.log(error);
-            window.location.href = "/";
+            window.location.reload();
     }
 };

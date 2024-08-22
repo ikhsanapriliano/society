@@ -6,7 +6,8 @@ import { JwtClaims } from "@/types/auth";
 import { jwtDecode } from "jwt-decode";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { AuthState, setAuth } from "@/slices/auth";
+import { AuthState, clearAuth, setAuth } from "@/slices/auth";
+import { setLocation } from "@/slices/sidebar";
 
 const Container = ({ children }: Readonly<{
     children: React.ReactNode;
@@ -18,25 +19,32 @@ const Container = ({ children }: Readonly<{
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        const token = localStorage.getItem("token")
+        try {
+            const token = localStorage.getItem("token")
 
-        if (token === null) {
-            if (pahtname.includes("chats")) {
-                router.push("/")
+            if (token === null) {
+                if (pahtname.includes("chats")) {
+                    router.push("/")
+                }
+                setIsLoading(false)
+
+                return
             }
+
+            const { userId, photo }: JwtClaims = jwtDecode(token)
+            const payload: AuthState = { token, userId, photo }
+            dispatch(setAuth(payload))
+            dispatch(setLocation("history"))
             setIsLoading(false)
-
-            return
+        } catch (error) {
+            console.log(error)
+            localStorage.removeItem("token")
+            window.location.reload()
         }
-
-        const { userId, photo }: JwtClaims = jwtDecode(token)
-        const payload: AuthState = { token, userId, photo }
-        dispatch(setAuth(payload))
-        setIsLoading(false)
     }, [auth, pahtname, dispatch, router])
 
     return (
-        <div className={`flex w-full h-full 2xl:w-[97%] 2xl:h-[95%] max-w-[1700px] max-h-[900px] mx-auto text-white shadow-xl overflow-hidden`}>
+        <div className={`flex w-full h-full 2xl:w-[97%] 2xl:h-[95%] max-w-[1700px] mx-auto text-white shadow-xl overflow-hidden`}>
             {
                 isLoading ?
                     <div>Loading</div>
