@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 
-const Home = () => {
+const Page = () => {
   return (
     <section className="h-full flex flex-col justify-center items-center text-center">
       <div className="w-[160px] min-h-[128px]">
@@ -15,4 +15,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Page

@@ -21,13 +21,11 @@ const peopleDetailSlice = createSlice({
             state.bio = action.payload.bio;
         },
         clearPeopleDetail: (state) => {
-            state = {
-                id: "",
-                username: "",
-                email: "",
-                photo: "",
-                bio: "",
-            };
+            state.id = "";
+            state.username = "";
+            state.email = "";
+            state.photo = "";
+            state.bio = "";
         },
     },
 });

@@ -22,7 +22,9 @@ const authSlice = createSlice({
             state.photo = action.payload.photo;
         },
         clearAuth: (state) => {
-            state = { token: undefined, userId: null, photo: null };
+            state.token = "";
+            state.userId = "";
+            state.photo = "";
         },
     },
 });

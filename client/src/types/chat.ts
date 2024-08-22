@@ -1,6 +1,4 @@
-import { ChatResponse } from "./chat.type";
-
-export interface RoomPayload {
+export interface CreateRoomPayload {
     secondUserId: string;
 }
 
@@ -17,6 +15,21 @@ export interface RoomResponse {
         photo: string;
     };
     chats: ChatResponse[];
+}
+
+export interface ChatResponse {
+    id: string;
+    senderId: string;
+    message?: string;
+    mediaUrl?: string;
+    status: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface RoomChatPayload {
+    message: string;
+    roomId: string;
 }
 
 export interface UserRoomResponse {

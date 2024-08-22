@@ -15,7 +15,7 @@ export const handleError = (
         case "401" || "403":
             localStorage.removeItem("token");
             dispatch(clearAuth());
-            window.location.reload();
+            window.location.href = "/";
             break;
         case "400":
             return splitted[1];

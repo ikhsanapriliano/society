@@ -72,7 +72,7 @@ const People = () => {
                                     people.map((item, index) => (
                                         <button onClick={() => { handleDetail(item) }} key={index} className="flex p-5 gap-5 w-full text-left hover:bg-third">
                                             <div className="flex-shrink-0 w-[50px] h-[50px] rounded-full overflow-hidden">
-                                                <Image src={"/" + item.photo} alt="photo" width={0} height={0} sizes="100vw" className="w-full h-auto" />
+                                                <Image src={item.photo} alt="photo" width={0} height={0} sizes="100vw" className="w-full h-auto" />
                                             </div>
                                             <div className="text-white w-full">
                                                 <p className="text-lg font-semibold">{item.username}</p>

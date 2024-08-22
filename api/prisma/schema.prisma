@@ -30,7 +30,7 @@ model User {
 
 model Profile {
   id        String   @id @default(uuid())
-  photo     String   @default("profile.jpg")
+  photo     String   @default("/profile.jpg")
   bio       String
   userId    String   @unique
   createdAt DateTime @default(now())
@@ -70,7 +70,7 @@ model RoomChat {
 model Group {
   id          String      @id @default(uuid())
   name        String
-  photo       String      @default("group.jpg")
+  photo       String      @default("/group.jpg")
   description String
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
