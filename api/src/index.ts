@@ -12,6 +12,12 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const clients: { id: string; ws: WebSocket }[] = [];
 
+const environment: string = process.env.ENVIRONMENT as string;
+const host = (
+    environment === "production" ? process.env.HOST : "localhost"
+) as string;
+const port = process.env.PORT as string;
+
 wss.on("connection", (ws) => {
     console.log("client connected");
 
@@ -49,6 +55,6 @@ app.use("*", NotFoundHandler);
 
 app.use(ErrorHandler);
 
-server.listen(3000, () => {
-    console.log("start");
+server.listen(Number(port), host, () => {
+    console.log(`your app is running on http://${host}:${port}`);
 });

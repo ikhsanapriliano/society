@@ -11,6 +11,7 @@ import Link from "next/link"
 import { RegisterWebsocket, WebsocketMessage } from "@/types/websocket"
 import { ChatFormat } from "@/types/chat"
 import { setMessage, setSocket } from "@/slices/websocket"
+import { wsUrl } from "@/utils/constants"
 
 const Login = () => {
     const dispatch = useDispatch()
@@ -39,7 +40,7 @@ const Login = () => {
             const authPayload: AuthState = { token, userId, photo }
             dispatch(setAuth(authPayload))
 
-            const ws = new WebSocket("ws://localhost:3000")
+            const ws = new WebSocket(wsUrl as string)
             const registerSocket: RegisterWebsocket = { userId: userId }
             ws.onopen = (_event) => { ws.send(JSON.stringify(registerSocket)) }
             ws.onmessage = (event) => {
@@ -78,7 +79,7 @@ const Login = () => {
                     <button type="submit" className={`bg-fifth w-full h-[40px] rounded-md mt-7 hover:opacity-70 ${isLoading ? "opacity-70" : "opacity-100"} duration-150`}>
                         {
                             isLoading ?
-                                <i className="fa-solid fa-spinner fa-spin"></i>
+                                <i aria-hidden className="fa-solid fa-spinner fa-spin"></i>
                                 :
                                 "login"
                         }

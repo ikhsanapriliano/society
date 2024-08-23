@@ -109,6 +109,7 @@ export const FindByUserId = async (
                     item.roomChat.length !== 0
                         ? item.roomChat[0].message
                         : undefined,
+                updatedAt: item.updatedAt,
             };
 
             if (temp.message !== undefined) {
@@ -134,6 +135,7 @@ export const FindByUserId = async (
                     item.roomChat.length !== 0
                         ? item.roomChat[0].message
                         : undefined,
+                updatedAt: item.updatedAt,
             };
 
             if (temp.message !== undefined) {
@@ -148,6 +150,8 @@ export const FindByUserId = async (
             rooms.push(temp);
         });
     }
+
+    rooms.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
     return rooms;
 };

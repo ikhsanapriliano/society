@@ -51,7 +51,7 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className="bg-second w-[35%]">
+    <aside className="bg-second w-[35%] z-50">
       {
         userId ?
           renderDashboardComponent()

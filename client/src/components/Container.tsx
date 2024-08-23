@@ -11,6 +11,8 @@ import { AuthState, clearAuth, setAuth } from "@/slices/auth";
 import { setMessage, setSocket, WebsocketState } from "@/slices/websocket";
 import { RegisterWebsocket, WebsocketMessage } from "@/types/websocket";
 import { ChatFormat } from "@/types/chat";
+import { wsUrl } from "@/utils/constants";
+import Loading from "@/app/loading";
 
 const Container = ({ children }: Readonly<{
     children: React.ReactNode;
@@ -38,7 +40,7 @@ const Container = ({ children }: Readonly<{
             const payload: AuthState = { token, userId, photo }
             dispatch(setAuth(payload))
 
-            const ws = new WebSocket("ws://localhost:3000")
+            const ws = new WebSocket(wsUrl as string)
             const registerSocket: RegisterWebsocket = { userId: userId }
             ws.onopen = (_event) => { ws.send(JSON.stringify(registerSocket)) }
             ws.onmessage = (event) => {
@@ -59,7 +61,7 @@ const Container = ({ children }: Readonly<{
         <div className={`flex w-full h-full 2xl:w-[97%] 2xl:h-[95%] max-w-[1700px] mx-auto text-white shadow-xl overflow-hidden`}>
             {
                 isLoading ?
-                    <div>Loading</div>
+                    <Loading />
                     :
                     <>
                         <Sidebar />

@@ -66,7 +66,7 @@ const Register = () => {
                     <button type="submit" className="bg-fifth w-full h-[40px] rounded-md mt-5 hover:opacity-70 duration-150">
                         {
                             isLoading ?
-                                <i className="fa-solid fa-spinner fa-spin"></i>
+                                <i aria-hidden className="fa-solid fa-spinner fa-spin"></i>
                                 :
                                 "register"
                         }

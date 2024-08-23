@@ -24,4 +24,5 @@ export interface UserRoomResponse {
     username: string;
     photo: string;
     message?: string;
+    updatedAt: Date;
 }

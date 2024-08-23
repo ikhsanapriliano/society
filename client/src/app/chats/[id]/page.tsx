@@ -1,15 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client"
 
+import Loading from "@/app/loading"
 import { RootState } from "@/store/store"
 import { ChatFormat, RoomChatPayload, RoomResponse } from "@/types/chat"
 import { WebsocketMessage } from "@/types/websocket"
 import { get, post } from "@/utils/axios"
 import { handleError } from "@/utils/error"
+import { AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { FormEvent, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { motion } from "framer-motion"
 
 const Page = () => {
     const roomId = usePathname().split("/")[2]
@@ -78,12 +81,15 @@ const Page = () => {
     }
 
     return (
-        <>
+        <AnimatePresence>
             {
                 isLoading ?
-                    <i className="fa-solid fa-spinner fa-spin"></i>
+                    <Loading />
                     :
-                    <section className="flex flex-col justify-between h-full">
+                    <motion.section
+                        initial={{ opacity: 0, x: -300 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="flex flex-col justify-between h-full">
                         <header className="h-[10%] 2xl:max-h-[100px] py-3 px-5 flex items-center gap-5 bg-third">
                             <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
                                 <Image src={room!.secondUser.photo} alt="photo" width={0} height={0} sizes="100vw" className="w-full h-auto" />
@@ -96,28 +102,31 @@ const Page = () => {
                                 </div>
                             </div>
                         </header>
-                        <div ref={containerRef} className="p-5 flex-grow h-[80%] overflow-auto">
+                        <div ref={containerRef} className="p-5 flex-grow h-[80%] overflow-auto bg-first">
                             {
                                 chats.length !== 0 && chats.map((chat, index) => (
                                     <div key={index} className={`flex ${chat.senderId === room!.firstUserId ? "justify-end" : "justify-start"}`}>
-                                        <div className={`${chat.senderId === room!.firstUserId ? "bg-fifth" : "bg-forth"} py-2 px-4 rounded-md mb-2`}>
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 50 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            className={`${chat.senderId === room!.firstUserId ? "bg-fifth" : "bg-forth"} py-2 px-4 rounded-md mb-2`}>
                                             {chat.message}
-                                        </div>
+                                        </motion.div>
                                     </div>
                                 ))
                             }
                         </div>
                         <footer className="h-[10%] 2xl:max-h-[100px] px-5 flex gap-5 justify-center items-center bg-third">
-                            <button><i className="fa-solid fa-face-smile"></i></button>
-                            <button><i className="fa-solid fa-plus"></i></button>
+                            <button><i aria-hidden className="fa-solid fa-face-smile"></i></button>
+                            <button><i aria-hidden className="fa-solid fa-plus"></i></button>
                             <form onSubmit={(e) => { sendMessage(e) }} className="flex w-full gap-5">
                                 <input onChange={(e) => { setMessage(e.target.value) }} value={message} type="text" placeholder="type a message" className="h-[40px] w-full px-4 rounded-md bg-third border border-forth" />
-                                <button type="submit"><i className="fa-solid fa-paper-plane"></i></button>
+                                <button type="submit"><i aria-hidden className="fa-solid fa-paper-plane"></i></button>
                             </form>
                         </footer>
-                    </section>
+                    </motion.section>
             }
-        </>
+        </AnimatePresence>
     )
 }
 

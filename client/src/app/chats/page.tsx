@@ -9,6 +9,7 @@ import { handleError } from "@/utils/error"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import Loading from "../loading"
 
 const Page = () => {
   const token = useSelector((state: RootState) => state.auth.token)
@@ -40,9 +41,7 @@ const Page = () => {
   }
 
   return (
-    <section className="h-full flex flex-col justify-center items-center text-center">
-      <i className="fa-solid fa-spinner fa-spin"></i>
-    </section>
+    <Loading />
   )
 }
 

@@ -8,6 +8,8 @@ import { FormEvent, useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { setPeopleDetail } from "@/slices/peopledetail"
 import { useRouter } from "next/navigation"
+import Loading from "@/app/loading"
+import { AnimatePresence, motion } from "framer-motion"
 
 const People = () => {
     const dispatch = useDispatch()
@@ -52,25 +54,29 @@ const People = () => {
             <form onSubmit={(e) => { handleSearch(e) }} className="mt-5">
                 <div className="relative">
                     <input type="text" onChange={(e) => { setInputs(prev => ({ ...prev, value: e.target.value })) }} value={inputs.value} placeholder="find someone" className="w-full bg-third h-[40px] pl-12 pr-2 rounded-md" />
-                    <button type="submit" className="absolute left-0 h-full px-4"><i className="fa-solid fa-search"></i></button>
+                    <button type="submit" className="absolute left-0 h-full px-4"><i aria-hidden className="fa-solid fa-search"></i></button>
                 </div>
                 <div className="flex gap-3 mt-3">
                     <button onClick={() => { setInputs(prev => ({ ...prev, type: "username" })) }} type="submit" className={`${inputs.type === "username" ? "bg-fifth" : "border border-third"} px-5 py-1 rounded-md`}>username</button>
                     <button onClick={() => { setInputs(prev => ({ ...prev, type: "email" })) }} type="submit" className={`${inputs.type === "email" ? "bg-fifth" : "border border-third"} px-5 py-1 rounded-md`}>email</button>
                 </div>
             </form>
-            <div className="flex-grow overflow-auto mt-5">
+            <div className="flex-grow overflow-y-auto overflow-x-hidden mt-5">
                 {
                     isLoading ?
-                        <i className="fa-solid fa-spinner fa-spin"></i>
+                        <Loading />
                         :
                         people.length === 0 ?
                             <p className="text-sm w-full text-center mt-3">No people found.</p>
                             :
-                            <>
+                            <AnimatePresence>
                                 {
                                     people.map((item, index) => (
-                                        <button onClick={() => { handleDetail(item) }} key={index} className="flex p-5 gap-5 w-full text-left hover:bg-third">
+                                        <motion.button
+                                            initial={{ x: -100 }}
+                                            animate={{ x: 0 }}
+                                            exit={{ x: 100 }}
+                                            onClick={() => { handleDetail(item) }} key={index} className="flex p-5 gap-5 w-full text-left hover:bg-third">
                                             <div className="flex-shrink-0 w-[50px] h-[50px] rounded-full overflow-hidden">
                                                 <Image src={item.photo} alt="photo" width={0} height={0} sizes="100vw" className="w-full h-auto" />
                                             </div>
@@ -78,10 +84,10 @@ const People = () => {
                                                 <p className="text-lg font-semibold">{item.username}</p>
                                                 <p className="text-sm font-light">{item.email}</p>
                                             </div>
-                                        </button>
+                                        </motion.button>
                                     ))
                                 }
-                            </>
+                            </AnimatePresence>
                 }
             </div>
         </section>
