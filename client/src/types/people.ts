@@ -4,4 +4,5 @@ export interface PeopleResponse {
     email: string;
     photo: string;
     bio: string;
+    isOnline?: boolean;
 }

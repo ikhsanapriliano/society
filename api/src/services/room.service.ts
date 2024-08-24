@@ -36,7 +36,10 @@ export const FindById = async (
         id: chats.id,
         firstUserId: userId,
         secondUser: {
-            id: chats.firstUserId === userId ? chats.secondUserId : userId,
+            id:
+                chats.firstUserId === userId
+                    ? chats.secondUserId
+                    : chats.firstUserId,
             username:
                 chats.firstUserId === userId
                     ? chats.secondUser.username
@@ -46,17 +49,19 @@ export const FindById = async (
                     ? chats.secondUser.profile!.photo
                     : chats.firstUser.profile!.photo,
         },
-        chats: chats.roomChat.map(
-            (chat): ChatResponse => ({
-                id: chat.id,
-                senderId: chat.senderId,
-                message: chat.message !== "" ? chat.message : undefined,
-                mediaUrl: chat.mediaUrl !== "" ? chat.mediaUrl : undefined,
-                status: chat.status,
-                createdAt: chat.createdAt,
-                updatedAt: chat.updatedAt,
-            })
-        ),
+        chats: chats.roomChat
+            .map(
+                (chat): ChatResponse => ({
+                    id: chat.id,
+                    senderId: chat.senderId,
+                    message: chat.message !== "" ? chat.message : undefined,
+                    mediaUrl: chat.mediaUrl !== "" ? chat.mediaUrl : undefined,
+                    status: chat.status,
+                    createdAt: chat.createdAt,
+                    updatedAt: chat.updatedAt,
+                })
+            )
+            .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
     };
 
     return data;
@@ -103,6 +108,7 @@ export const FindByUserId = async (
         firstRooms.forEach((item) => {
             let temp: UserRoomResponse = {
                 id: item.id,
+                userId: item.secondUserId,
                 username: item.secondUser.username,
                 photo: item.secondUser.profile!.photo,
                 message:
@@ -129,6 +135,7 @@ export const FindByUserId = async (
         secondRooms.forEach((item) => {
             let temp: UserRoomResponse = {
                 id: item.id,
+                userId: item.firstUserId,
                 username: item.firstUser.username,
                 photo: item.firstUser.profile!.photo,
                 message:

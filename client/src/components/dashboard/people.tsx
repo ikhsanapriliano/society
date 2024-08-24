@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from "framer-motion"
 const People = () => {
     const dispatch = useDispatch()
     const token = useSelector((state: RootState) => state.auth.token)
+    const online = useSelector((state: RootState) => state.websocket.users)
     const [people, setPeople] = useState<PeopleResponse[]>([])
     const [inputs, setInputs] = useState({ value: "", type: "username" })
     const [isLoading, setIsLoading] = useState(true)
@@ -22,6 +23,24 @@ const People = () => {
     useEffect(() => {
         handleSearch()
     }, [])
+
+    useEffect(() => {
+        if (people.length !== 0) {
+            const newData = people.map((item) => {
+                let temp: PeopleResponse = { ...item }
+
+                if (online.includes(item.id)) {
+                    temp.isOnline = true
+                } else {
+                    temp.isOnline = false
+                }
+
+                return temp
+            })
+
+            setPeople(newData)
+        }
+    }, [online])
 
     const handleSearch = async (e?: FormEvent<HTMLFormElement>) => {
         try {
@@ -36,7 +55,18 @@ const People = () => {
             console.log(query)
 
             const data = await get<PeopleResponse[]>("/users", token, query !== "" ? query : undefined) as PeopleResponse[]
-            setPeople(data)
+
+            const newData = data.map((item) => {
+                let temp: PeopleResponse = { ...item }
+
+                if (online.includes(item.id)) {
+                    temp.isOnline = true
+                }
+
+                return temp
+            })
+
+            setPeople(newData)
             setIsLoading(false)
         } catch (error: Error | unknown) {
             handleError(error, dispatch)
@@ -77,8 +107,11 @@ const People = () => {
                                             animate={{ x: 0 }}
                                             exit={{ x: 100 }}
                                             onClick={() => { handleDetail(item) }} key={index} className="flex p-5 gap-5 w-full text-left hover:bg-third">
-                                            <div className="flex-shrink-0 w-[50px] h-[50px] rounded-full overflow-hidden">
-                                                <Image src={item.photo} alt="photo" width={0} height={0} sizes="100vw" className="w-full h-auto" />
+                                            <div className="relative">
+                                                <div className="flex-shrink-0 w-[50px] h-[50px] rounded-full overflow-hidden">
+                                                    <Image src={item.photo} alt="photo" width={0} height={0} sizes="100vw" className="w-full h-auto" />
+                                                </div>
+                                                {item.isOnline && <div className="absolute top-[-5px] right-[-5px] w-[20px] h-[20px] bg-green-500 rounded-full"></div>}
                                             </div>
                                             <div className="text-white w-full">
                                                 <p className="text-lg font-semibold">{item.username}</p>

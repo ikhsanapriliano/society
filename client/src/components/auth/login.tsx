@@ -10,7 +10,7 @@ import { handleError } from "@/utils/error"
 import Link from "next/link"
 import { RegisterWebsocket, WebsocketMessage } from "@/types/websocket"
 import { ChatFormat } from "@/types/chat"
-import { setMessage, setSocket } from "@/slices/websocket"
+import { setMessage, setSocket, setUsers } from "@/slices/websocket"
 import { wsUrl } from "@/utils/constants"
 
 const Login = () => {
@@ -44,8 +44,17 @@ const Login = () => {
             const registerSocket: RegisterWebsocket = { userId: userId }
             ws.onopen = (_event) => { ws.send(JSON.stringify(registerSocket)) }
             ws.onmessage = (event) => {
-                const data: ChatFormat = (JSON.parse(event.data) as WebsocketMessage).data as ChatFormat
-                dispatch(setMessage(data))
+                const message: WebsocketMessage | string[] = (JSON.parse(event.data))
+                if ((message as WebsocketMessage).data) {
+                    const data = (message as WebsocketMessage).data
+                    dispatch(setMessage(data))
+                    return
+                }
+
+                if ((message as string[])) {
+                    console.log(message)
+                    dispatch(setUsers(message as string[]))
+                }
             }
             dispatch(setSocket(ws))
 

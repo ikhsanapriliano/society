@@ -1,11 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Loading from "@/app/loading"
 import { RootState } from "@/store/store"
 import { UserRoomResponse } from "@/types/chat"
 import { get } from "@/utils/axios"
 import { handleError } from "@/utils/error"
-import Image from "next/image"
-import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -20,6 +17,7 @@ const HistoryChat = () => {
     const [isLoading, setIsLoading] = useState(false)
     const pathname = usePathname().split("/")[2]
     const data = useSelector((state: RootState) => state.websocket.data)
+    const online = useSelector((state: RootState) => state.websocket.users)
     const [isAnimate, setIsAnimate] = useState(false)
     const topCard = useRef<HTMLButtonElement>(null)
 
@@ -36,11 +34,40 @@ const HistoryChat = () => {
         topCard.current?.scrollIntoView()
     }, [data])
 
+    useEffect(() => {
+        if (rooms.length !== 0) {
+            const newData = rooms.map((item) => {
+                let temp: UserRoomResponse = { ...item }
+
+                if (online.includes(item.userId)) {
+                    temp.isOnline = true
+                } else {
+                    temp.isOnline = false
+                }
+
+                return temp
+            })
+
+            setRooms(newData)
+        }
+    }, [online])
+
     const fetchRooms = async () => {
         try {
             setIsLoading(true)
             const data = await get<UserRoomResponse[]>("/rooms", token, undefined) as UserRoomResponse[]
-            setRooms(data)
+
+            const newData = data.map((item) => {
+                let temp: UserRoomResponse = { ...item }
+
+                if (online.includes(item.userId)) {
+                    temp.isOnline = true
+                }
+
+                return temp
+            })
+
+            setRooms(newData)
             setIsLoading(false)
         } catch (error) {
             console.log(error)
@@ -53,7 +80,7 @@ const HistoryChat = () => {
             <h2 className="font-semibold text-[20px]">Chats</h2>
             <form>
                 <div className="relative mt-5">
-                    <input type="text" placeholder="search you chat history" className="w-full bg-third h-[40px] pl-12 pr-2 rounded-md" />
+                    <input type="text" placeholder="search your chat history" className="w-full bg-third h-[40px] pl-12 pr-2 rounded-md" />
                     <button type="submit" className="absolute left-0 h-full px-4"><i aria-hidden className="fa-solid fa-search"></i></button>
                 </div>
                 <div className="flex gap-3 mt-3">

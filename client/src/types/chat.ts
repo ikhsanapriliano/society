@@ -13,6 +13,7 @@ export interface RoomResponse {
         id: string;
         username: string;
         photo: string;
+        isOnline?: boolean;
     };
     chats: ChatResponse[];
 }
@@ -34,9 +35,11 @@ export interface RoomChatPayload {
 
 export interface UserRoomResponse {
     id: string;
+    userId: string;
     username: string;
     photo: string;
     message?: string;
+    isOnline?: boolean;
 }
 
 export interface ChatFormat {

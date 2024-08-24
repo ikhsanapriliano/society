@@ -21,6 +21,7 @@ export interface RoomResponse {
 
 export interface UserRoomResponse {
     id: string;
+    userId: string;
     username: string;
     photo: string;
     message?: string;

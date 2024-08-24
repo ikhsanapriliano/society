@@ -21,6 +21,6 @@ export const handleError = (
             return splitted[1];
         default:
             console.log(error);
-            window.location.reload();
+        // window.location.reload();
     }
 };

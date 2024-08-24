@@ -5,7 +5,7 @@ export const CreateRoomChatValidation = (
     payload: RoomChatPayload
 ): Joi.ValidationResult<RoomChatPayload> => {
     const schema = Joi.object({
-        message: Joi.string().trim(),
+        message: Joi.string(),
         mediaUrl: Joi.string().trim().uri(),
         roomId: Joi.string().required().messages({
             "string.empty": "Room id is required.",

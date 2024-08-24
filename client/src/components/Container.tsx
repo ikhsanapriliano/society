@@ -7,10 +7,9 @@ import { JwtClaims } from "@/types/auth";
 import { jwtDecode } from "jwt-decode";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { AuthState, clearAuth, setAuth } from "@/slices/auth";
-import { setMessage, setSocket, WebsocketState } from "@/slices/websocket";
+import { AuthState, setAuth } from "@/slices/auth";
+import { setMessage, setSocket, setUsers } from "@/slices/websocket";
 import { RegisterWebsocket, WebsocketMessage } from "@/types/websocket";
-import { ChatFormat } from "@/types/chat";
 import { wsUrl } from "@/utils/constants";
 import Loading from "@/app/loading";
 
@@ -44,8 +43,16 @@ const Container = ({ children }: Readonly<{
             const registerSocket: RegisterWebsocket = { userId: userId }
             ws.onopen = (_event) => { ws.send(JSON.stringify(registerSocket)) }
             ws.onmessage = (event) => {
-                const data: ChatFormat = (JSON.parse(event.data) as WebsocketMessage).data as ChatFormat
-                dispatch(setMessage(data))
+                const message: WebsocketMessage | string[] = (JSON.parse(event.data))
+                if ((message as WebsocketMessage).data) {
+                    const data = (message as WebsocketMessage).data
+                    dispatch(setMessage(data))
+                    return
+                }
+
+                if ((message as string[])) {
+                    dispatch(setUsers(message as string[]))
+                }
             }
             dispatch(setSocket(ws))
 

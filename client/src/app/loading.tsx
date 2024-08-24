@@ -1,7 +1,11 @@
+import Image from "next/image"
+
 const Loading = () => {
     return (
-        <div className="w-full h-full flex flex-col justify-center items-center">
-            <i aria-hidden className="fa-solid fa-spinner fa-spin text-white mb-5"></i>
+        <div className="w-full flex flex-col gap-3 h-full justify-center items-center">
+            <div className="w-[50px]">
+                <Image src={"/dharmachakra-solid.svg"} alt="chakra" width={0} height={0} className="w-full h-auto animate-spin" />
+            </div>
             <p>Loading</p>
         </div>
     )

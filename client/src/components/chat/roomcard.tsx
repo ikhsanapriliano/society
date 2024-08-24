@@ -23,8 +23,11 @@ const RoomCard = ({ item, isAnimate, pathname, ref }: Room) => {
             initial={{ x: (pathname !== item.id && isAnimate) ? -100 : 0, y: (pathname === item.id && isAnimate) ? 100 : 0 }}
             animate={{ x: 0, y: 0 }}
         >
-            <div className="flex-shrink-0 w-[50px] h-[50px] rounded-full overflow-hidden">
-                <Image src={item.photo} alt="photo" width={0} height={0} sizes="100vw" className="w-full h-auto" />
+            <div className="relative">
+                <div className="flex-shrink-0 w-[50px] h-[50px] rounded-full overflow-hidden">
+                    <Image src={item.photo} alt="photo" width={0} height={0} sizes="100vw" className="w-full h-auto" />
+                </div>
+                {item.isOnline && <div className="absolute top-[-5px] right-[-5px] w-[20px] h-[20px] bg-green-500 rounded-full"></div>}
             </div>
             <div className="text-white w-full">
                 <p className="text-lg font-semibold">{item.username}</p>

@@ -10,7 +10,7 @@ import { WebSocket } from "ws";
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-const clients: { id: string; ws: WebSocket }[] = [];
+let clients: { id: string; ws: WebSocket }[] = [];
 
 const environment: string = process.env.ENVIRONMENT as string;
 const host = (
@@ -23,24 +23,60 @@ wss.on("connection", (ws) => {
 
     ws.on("message", (message) => {
         console.log("received: " + message);
-
         const data = JSON.parse(message as unknown as string);
 
         if (data.userId) {
-            clients.push({ id: data.userId, ws: ws });
-            return;
+            let isExist = false;
+            clients.forEach((item) => {
+                if (item.id === data.userId) {
+                    isExist = true;
+                }
+            });
+
+            if (!isExist) {
+                clients.push({ id: data.userId, ws: ws });
+            }
+
+            const users: string[] = clients.map((item) => item.id);
+            console.log("online", users);
+            wss.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(users));
+                }
+            });
         }
 
-        clients.forEach((client) => {
-            if (client.id === data.receiver || client.id === data.sender) {
-                if (client.ws.readyState === WebSocket.OPEN) {
-                    client.ws.send(JSON.stringify(data));
+        if (data.sender) {
+            console.log("new message");
+
+            clients.forEach((client) => {
+                if (client.id === data.receiver || client.id === data.sender) {
+                    if (client.ws.readyState === WebSocket.OPEN) {
+                        client.ws.send(JSON.stringify(data));
+                    }
                 }
-            }
-        });
+            });
+        }
     });
 
     ws.on("close", () => {
+        const newClients: { id: string; ws: WebSocket }[] = [];
+        clients.forEach((item) => {
+            if (item.ws != ws) {
+                newClients.push(item);
+            }
+        });
+
+        clients = newClients;
+        const users: string[] = clients.map((item) => item.id);
+        console.log("online", users);
+
+        clients.forEach((client) => {
+            if (client.ws.readyState === WebSocket.OPEN) {
+                client.ws.send(JSON.stringify(users));
+            }
+        });
+
         console.log("client disconnected");
     });
 });

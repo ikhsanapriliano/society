@@ -9,6 +9,10 @@ export const store = configureStore({
         websocket,
         peopledetail,
     },
+    middleware: (defaultMiddleware) =>
+        defaultMiddleware({
+            serializableCheck: false,
+        }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
