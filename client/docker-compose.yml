@@ -1,9 +1,16 @@
-version: '3'
+version: '3.8'
 
 services:
-  nextjs:
+  app:
     build: .
+    container_name: society-app
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:3000
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_WS_URL=ws://localhost:3001
+    networks:
+      - webnet
+
+networks:
+  webnet:

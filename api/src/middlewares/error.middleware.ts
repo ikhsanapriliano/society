@@ -37,10 +37,14 @@ export const ErrorHandler = (
 };
 
 export const NotFoundHandler = (_req: Request, res: Response): void => {
-    const response: ErrorResponse = {
-        status: 404,
-        message: "Not Found",
-    };
+    try {
+        const response: ErrorResponse = {
+            status: 404,
+            message: "Not Found",
+        };
 
-    res.status(404).json(response);
+        res.status(404).json(response);
+    } catch (error) {
+        logger.error(error);
+    }
 };
