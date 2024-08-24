@@ -9,3 +9,9 @@ export interface WebsocketMessage {
     receiver: string;
     data: ChatFormat;
 }
+
+export interface WebsocketMessageRead {
+    sender: string;
+    receiver: string;
+    isRead: boolean;
+}

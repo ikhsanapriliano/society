@@ -8,9 +8,9 @@ import { useDispatch } from "react-redux"
 import { motion } from "framer-motion"
 import { handleError } from "@/utils/error"
 import Link from "next/link"
-import { RegisterWebsocket, WebsocketMessage } from "@/types/websocket"
+import { RegisterWebsocket, WebsocketMessage, WebsocketMessageRead } from "@/types/websocket"
 import { ChatFormat } from "@/types/chat"
-import { setMessage, setSocket, setUsers } from "@/slices/websocket"
+import { setIsRead, setMessage, setSocket, setUsers } from "@/slices/websocket"
 import { wsUrl } from "@/utils/constants"
 
 const Login = () => {
@@ -44,10 +44,15 @@ const Login = () => {
             const registerSocket: RegisterWebsocket = { userId: userId }
             ws.onopen = (_event) => { ws.send(JSON.stringify(registerSocket)) }
             ws.onmessage = (event) => {
-                const message: WebsocketMessage | string[] = (JSON.parse(event.data))
+                const message: WebsocketMessage | string[] | WebsocketMessageRead = (JSON.parse(event.data))
                 if ((message as WebsocketMessage).data) {
                     const data = (message as WebsocketMessage).data
                     dispatch(setMessage(data))
+                    return
+                }
+
+                if ((message as WebsocketMessageRead).isRead) {
+                    dispatch(setIsRead(true))
                     return
                 }
 

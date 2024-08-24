@@ -50,25 +50,35 @@ export const FindById = async (
                     : chats.firstUser.profile!.photo,
         },
         chats: chats.roomChat
-            .map(
-                (chat): ChatResponse => ({
+            .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+            .map((chat): ChatResponse => {
+                const cHour = chat.createdAt.getHours();
+                const cMinute = chat.createdAt.getMinutes();
+                const uHour = chat.createdAt.getHours();
+                const uMinute = chat.createdAt.getMinutes();
+
+                const cTime = `${cHour}:${cMinute}`;
+                const uTime = `${uHour}:${uMinute}`;
+
+                return {
                     id: chat.id,
                     senderId: chat.senderId,
                     message: chat.message !== "" ? chat.message : undefined,
                     mediaUrl: chat.mediaUrl !== "" ? chat.mediaUrl : undefined,
                     status: chat.status,
-                    createdAt: chat.createdAt,
-                    updatedAt: chat.updatedAt,
-                })
-            )
-            .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+                    createdAt: cTime,
+                    updatedAt: uTime,
+                };
+            }),
     };
 
     return data;
 };
 
 export const FindByUserId = async (
-    userId: string
+    userId: string,
+    history?: string,
+    isUnread?: boolean
 ): Promise<UserRoomResponse[]> => {
     const firstRooms = await prisma.room.findMany({
         where: { firstUserId: userId },
@@ -102,11 +112,11 @@ export const FindByUserId = async (
         },
     });
 
-    const rooms: UserRoomResponse[] = [];
+    let rooms: UserRoomResponse[] = [];
 
     if (firstRooms.length !== 0) {
         firstRooms.forEach((item) => {
-            let temp: UserRoomResponse = {
+            const temp: UserRoomResponse = {
                 id: item.id,
                 userId: item.secondUserId,
                 username: item.secondUser.username,
@@ -118,22 +128,39 @@ export const FindByUserId = async (
                 updatedAt: item.updatedAt,
             };
 
-            if (temp.message !== undefined) {
-                if (temp.message?.length > 20) {
-                    temp = {
-                        ...temp,
-                        message: `${temp.message.substring(0, 16)}....`,
-                    };
+            let unread = 0;
+            if (item.roomChat.length !== 0) {
+                for (const chat of item.roomChat) {
+                    if (chat.status === "sent" && chat.senderId !== userId) {
+                        unread++;
+                    }
+
+                    if (history) {
+                        if (chat.message.includes(history)) {
+                            temp.message = chat.message;
+                            break;
+                        } else {
+                            temp.message = undefined;
+                        }
+                    }
                 }
             }
 
-            rooms.push(temp);
+            temp.unread = unread;
+
+            if (isUnread && temp.unread === 0) {
+                temp.message = undefined;
+            }
+
+            if (temp.message !== "" && temp.message !== undefined) {
+                rooms.push(temp);
+            }
         });
     }
 
     if (secondRooms.length !== 0) {
         secondRooms.forEach((item) => {
-            let temp: UserRoomResponse = {
+            const temp: UserRoomResponse = {
                 id: item.id,
                 userId: item.firstUserId,
                 username: item.firstUser.username,
@@ -145,20 +172,47 @@ export const FindByUserId = async (
                 updatedAt: item.updatedAt,
             };
 
-            if (temp.message !== undefined) {
-                if (temp.message?.length > 20) {
-                    temp = {
-                        ...temp,
-                        message: `${temp.message.substring(0, 16)}....`,
-                    };
+            let unread = 0;
+            if (item.roomChat.length !== 0) {
+                for (const chat of item.roomChat) {
+                    if (chat.status === "sent" && chat.senderId !== userId) {
+                        unread++;
+                    }
+
+                    if (history) {
+                        if (chat.message.includes(history)) {
+                            temp.message = chat.message;
+                            break;
+                        } else {
+                            temp.message = undefined;
+                        }
+                    }
                 }
             }
 
-            rooms.push(temp);
+            temp.unread = unread;
+
+            if (isUnread && temp.unread === 0) {
+                temp.message = undefined;
+            }
+
+            if (temp.message !== "" && temp.message !== undefined) {
+                rooms.push(temp);
+            }
         });
     }
 
-    rooms.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+    rooms = rooms
+        .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+        .map((item) => {
+            const day = item.updatedAt.getDate().toString().padStart(2, "0");
+            const month = (item.updatedAt.getMonth() + 1)
+                .toString()
+                .padStart(2, "0");
+            const year = item.updatedAt.getFullYear();
+            const date = `${day}/${month}/${year}`;
+            return { ...item, date };
+        });
 
     return rooms;
 };

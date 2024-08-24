@@ -26,8 +26,10 @@ export const FindByUserIdHandler = async (
 ): Promise<Response | undefined> => {
     try {
         const userId = res.locals.userId;
+        const history = req.query.history as string | undefined;
+        const isUnread = req.query.isUnread as boolean | undefined;
 
-        const data = await FindByUserId(userId);
+        const data = await FindByUserId(userId, history, isUnread);
         return NewResponse(res, 200, data);
     } catch (error) {
         next(error);

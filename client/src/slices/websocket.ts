@@ -5,12 +5,14 @@ export interface WebsocketState {
     socket: WebSocket | null;
     data: ChatFormat | null;
     users: string[];
+    isRead: boolean;
 }
 
 const initialState: WebsocketState = {
     socket: null,
     data: null,
     users: [],
+    isRead: false,
 };
 
 const websocketSlice = createSlice({
@@ -26,8 +28,12 @@ const websocketSlice = createSlice({
         setUsers: (state, action: PayloadAction<string[]>) => {
             state.users = action.payload;
         },
+        setIsRead: (state, action: PayloadAction<boolean>) => {
+            state.isRead = action.payload;
+        },
     },
 });
 
-export const { setSocket, setMessage, setUsers } = websocketSlice.actions;
+export const { setSocket, setMessage, setUsers, setIsRead } =
+    websocketSlice.actions;
 export default websocketSlice.reducer;

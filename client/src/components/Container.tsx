@@ -8,22 +8,33 @@ import { jwtDecode } from "jwt-decode";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { AuthState, setAuth } from "@/slices/auth";
-import { setMessage, setSocket, setUsers } from "@/slices/websocket";
-import { RegisterWebsocket, WebsocketMessage } from "@/types/websocket";
+import { setIsRead, setMessage, setSocket, setUsers } from "@/slices/websocket";
+import { RegisterWebsocket, WebsocketMessage, WebsocketMessageRead } from "@/types/websocket";
 import { wsUrl } from "@/utils/constants";
 import Loading from "@/app/loading";
+import { setInternalError } from "@/slices/error";
+import ErrorPage from "@/app/error";
 
 const Container = ({ children }: Readonly<{
     children: React.ReactNode;
 }>) => {
-    const auth = useSelector((state: RootState) => state.auth)
     const dispatch = useDispatch()
     const pahtname = usePathname()
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(true)
+    const isInternalError = useSelector((state: RootState) => state.error.isInternalError)
 
     useEffect(() => {
         try {
+            const error = sessionStorage.getItem("error")
+            if (error) {
+                console.log(JSON.parse(error))
+                dispatch(setInternalError())
+                sessionStorage.removeItem("error")
+                setIsLoading(false)
+                return
+            }
+
             const token = localStorage.getItem("token")
 
             if (token === null) {
@@ -43,10 +54,15 @@ const Container = ({ children }: Readonly<{
             const registerSocket: RegisterWebsocket = { userId: userId }
             ws.onopen = (_event) => { ws.send(JSON.stringify(registerSocket)) }
             ws.onmessage = (event) => {
-                const message: WebsocketMessage | string[] = (JSON.parse(event.data))
+                const message: WebsocketMessage | WebsocketMessageRead | string[] = (JSON.parse(event.data))
                 if ((message as WebsocketMessage).data) {
                     const data = (message as WebsocketMessage).data
                     dispatch(setMessage(data))
+                    return
+                }
+
+                if ((message as WebsocketMessageRead).isRead) {
+                    dispatch(setIsRead(true))
                     return
                 }
 
@@ -70,12 +86,15 @@ const Container = ({ children }: Readonly<{
                 isLoading ?
                     <Loading />
                     :
-                    <>
-                        <Sidebar />
-                        <main className="bg-first w-[65%]">
-                            {children}
-                        </main>
-                    </>
+                    isInternalError ?
+                        <ErrorPage />
+                        :
+                        <>
+                            <Sidebar />
+                            <main className="bg-first w-[65%]">
+                                {children}
+                            </main>
+                        </>
             }
         </div>
     )

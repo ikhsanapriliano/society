@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateRoomChat } from "../services/chat.service";
+import { CreateRoomChat, UpdateRoomChat } from "../services/chat.service";
 import { RoomChatPayload } from "../types/chat.type";
 import { NewResponse } from "../utils/response.util";
 import { CreateRoomChatValidation } from "../validations/chat.validation";
@@ -18,6 +18,22 @@ export const CreateRoomChatHandler = async (
 
         await CreateRoomChat(userId, value);
         return NewResponse(res, 201);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const UpdateRoomChatHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<Response | undefined> => {
+    try {
+        const userId = res.locals.userId;
+        const roomId = req.params.roomId;
+
+        await UpdateRoomChat(roomId, userId);
+        return NewResponse(res, 200);
     } catch (error) {
         next(error);
     }

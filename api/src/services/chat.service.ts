@@ -25,3 +25,18 @@ export const CreateRoomChat = async (
         });
     });
 };
+
+export const UpdateRoomChat = async (roomId: string, userId: string) => {
+    await prisma.roomChat.updateMany({
+        where: {
+            roomId,
+            senderId: {
+                not: userId,
+            },
+            status: "sent",
+        },
+        data: {
+            status: "read",
+        },
+    });
+};

@@ -4,8 +4,8 @@
 import Loading from "@/app/loading"
 import { RootState } from "@/store/store"
 import { ChatFormat, RoomChatPayload, RoomResponse } from "@/types/chat"
-import { WebsocketMessage } from "@/types/websocket"
-import { get, post } from "@/utils/axios"
+import { WebsocketMessage, WebsocketMessageRead } from "@/types/websocket"
+import { get, patch, post } from "@/utils/axios"
 import { handleError } from "@/utils/error"
 import { AnimatePresence } from "framer-motion"
 import Image from "next/image"
@@ -13,12 +13,13 @@ import { usePathname } from "next/navigation"
 import { ChangeEvent, FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { motion } from "framer-motion"
+import { setIsRead } from "@/slices/websocket"
 
 const Page = () => {
     const roomId = usePathname().split("/")[2]
     const dispatch = useDispatch()
     const { token, userId } = useSelector((state: RootState) => state.auth)
-    const { socket, data } = useSelector((state: RootState) => state.websocket)
+    const { socket, data, isRead } = useSelector((state: RootState) => state.websocket)
     const [room, setRoom] = useState<RoomResponse>()
     const [chats, setChats] = useState<ChatFormat[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -28,9 +29,20 @@ const Page = () => {
     const textRef = useRef<HTMLTextAreaElement>(null)
     const [isSending, setIsSending] = useState(false)
     const online = useSelector((state: RootState) => state.websocket.users)
+    const secondUser = sessionStorage.getItem("secodnUser")
 
     useEffect(() => {
-        fetchRoom()
+        if (room !== undefined && isRead === true) {
+            fetchRoom().then(() => {
+                dispatch(setIsRead(false))
+            })
+        }
+    }, [isRead])
+
+    useEffect(() => {
+        updateRead().then(() => {
+            fetchRoom()
+        })
     }, [data])
 
     useEffect(() => {
@@ -51,6 +63,23 @@ const Page = () => {
         }
     }, [chats])
 
+    const updateRead = async () => {
+        try {
+            await patch<undefined, undefined>(`/rooms/${roomId}/chats`, token, undefined)
+
+            const wsPayload: WebsocketMessageRead = {
+                sender: userId!,
+                receiver: room ? room.secondUser.id : secondUser as string,
+                isRead: true,
+            }
+
+            if (secondUser) sessionStorage.removeItem("secondUser")
+            socket?.send(JSON.stringify(wsPayload))
+        } catch (error) {
+            handleError(error, dispatch)
+        }
+    }
+
     const fetchRoom = async () => {
         try {
             const data = await get<RoomResponse>(`/rooms/${roomId}`, token, undefined) as RoomResponse
@@ -63,9 +92,13 @@ const Page = () => {
             setRoom(newData)
 
             if (newData.chats.length !== 0) {
-                setChats(newData.chats.map(chat => ({ senderId: chat.senderId, message: chat.message! })))
+                setChats(newData.chats.map(chat => ({
+                    senderId: chat.senderId,
+                    message: chat.message!,
+                    time: chat.createdAt,
+                    status: chat.status
+                })))
             }
-
             setIsLoading(false)
         } catch (error) {
             handleError(error, dispatch)
@@ -92,7 +125,9 @@ const Page = () => {
                 receiver: room!.secondUser.id,
                 data: {
                     senderId: userId!,
-                    message: newMessage
+                    message: newMessage,
+                    time: new Date().toString(),
+                    status: "sent"
                 }
             }
 
@@ -164,14 +199,18 @@ const Page = () => {
                                         <motion.div
                                             initial={{ opacity: 0, y: 50 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            className={`${chat.senderId === room!.firstUserId ? "bg-fifth" : "bg-forth"} py-2 px-4 rounded-md mb-2 whitespace-pre-wrap break-words max-w-[90%]`}>
-                                            {chat.message}
+                                            className={`${chat.senderId === room!.firstUserId ? "bg-fifth" : "bg-third"} relative py-2 px-4 rounded-md mb-2 whitespace-pre-wrap break-words max-w-[90%]`}>
+                                            <p className="pr-[3.3rem]">{chat.message}</p>
+                                            <div className="absolute right-2 bottom-1 flex gap-2 items-center">
+                                                <p className="text-xs font-light text-gray-400">{chat.time}</p>
+                                                <i className={`fa-solid fa-check-double text-xs ${chat.status === "read" ? "text-blue-500" : "text-gray-400"}`}></i>
+                                            </div>
                                         </motion.div>
                                     </div>
                                 ))
                             }
                         </div>
-                        <footer className={`${paragraph === 1 ? "h-[10%]" : "h-fit"} 2xl:h-[100px] 2xl:max-h-[100px] py-5 px-5 flex gap-5 justify-center items-center bg-third`}>
+                        <footer className={`${paragraph === 1 ? "h-[10%] 2xl:max-h-[100px]" : "h-fit"} py-5 px-5 flex gap-5 justify-center items-center bg-third`}>
                             <button><i aria-hidden className="fa-solid fa-face-smile"></i></button>
                             <button><i aria-hidden className="fa-solid fa-plus"></i></button>
                             <form onSubmit={(e) => { sendMessage(e) }} className="flex w-full h-full gap-5 justify-center items-center">

@@ -10,6 +10,6 @@ export interface ChatResponse {
     message?: string;
     mediaUrl?: string;
     status: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }

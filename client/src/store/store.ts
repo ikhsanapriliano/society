@@ -1,6 +1,7 @@
 import auth from "@/slices/auth";
 import peopledetail from "@/slices/peopledetail";
 import websocket from "@/slices/websocket";
+import error from "@/slices/error";
 import { configureStore } from "@reduxjs/toolkit";
 
 export const store = configureStore({
@@ -8,6 +9,7 @@ export const store = configureStore({
         auth,
         websocket,
         peopledetail,
+        error,
     },
     middleware: (defaultMiddleware) =>
         defaultMiddleware({

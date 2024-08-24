@@ -40,13 +40,23 @@ wss.on("connection", (ws) => {
             const users: string[] = clients.map((item) => item.id);
             console.log("online", users);
             wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(users));
+                client.send(JSON.stringify(users));
+            });
+        }
+
+        if (data.isRead) {
+            console.log("reading message");
+
+            clients.forEach((client) => {
+                if (client.id === data.receiver || client.id === data.sender) {
+                    if (client.ws.readyState === WebSocket.OPEN) {
+                        client.ws.send(JSON.stringify(data));
+                    }
                 }
             });
         }
 
-        if (data.sender) {
+        if (data.sender && data.data) {
             console.log("new message");
 
             clients.forEach((client) => {

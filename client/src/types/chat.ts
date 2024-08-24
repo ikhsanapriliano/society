@@ -24,8 +24,8 @@ export interface ChatResponse {
     message?: string;
     mediaUrl?: string;
     status: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface RoomChatPayload {
@@ -39,10 +39,15 @@ export interface UserRoomResponse {
     username: string;
     photo: string;
     message?: string;
+    unread: number;
+    date: string;
     isOnline?: boolean;
 }
 
 export interface ChatFormat {
     senderId: string;
     message: string;
+    time: string;
+    status: string;
+    isUpdated?: boolean;
 }

@@ -7,9 +7,10 @@ export const handleError = (
 ): string | undefined => {
     const message = (error as Error).message;
     const splitted = message.split(":");
+    console.log(error);
     switch (splitted[0]) {
         case "500":
-            console.log(error);
+            sessionStorage.setItem("error", JSON.stringify({ error: message }));
             window.location.reload();
             break;
         case "401" || "403":
@@ -20,7 +21,7 @@ export const handleError = (
         case "400":
             return splitted[1];
         default:
-            console.log(error);
-        // window.location.reload();
+            sessionStorage.setItem("error", JSON.stringify({ error: message }));
+            window.location.reload();
     }
 };
