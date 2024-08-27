@@ -80,6 +80,7 @@ const Login = () => {
             <div className="h-full flex justify-center items-center w-full">
                 <form onSubmit={(e) => { handleSubmit(e) }} className="px-5 w-full">
                     <h2 className="font-bold text-[20px]">login</h2>
+                    <h2 className="font-bold text-[20px]">heheheh</h2>
                     <div className="flex flex-col mt-7">
                         <label htmlFor="email" className="font-semibold">email</label>
                         <input id="email" onChange={(e) => { setInputs(prev => ({ ...prev, email: e.target.value })) }} value={inputs.email} type="text" autoComplete="email" className="h-[40px] rounded-md bg-third mt-2 px-2" />
