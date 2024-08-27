@@ -1,3 +1,5 @@
-# node_modules
+node_modules
 .env
-eslint.config.mjs
+.next
+nginx
+next-env.d.ts
