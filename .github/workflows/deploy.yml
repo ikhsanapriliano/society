@@ -1,4 +1,4 @@
-name: Build and Push Docker Images
+name: Build and Push Docker Images + Deploy
 
 on:
   push:
@@ -28,3 +28,12 @@ jobs:
       run: |
         docker build -t ikhsan816/society:latest .
         docker push ikhsan816/society:latest
+
+    - name: Set up SSH key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Deploy to server
+      run: |
+        ssh -o StrictHostKeyChecking=no user@server "cd society/client && docker compose down && docker compose pull && docker compose up -d"
