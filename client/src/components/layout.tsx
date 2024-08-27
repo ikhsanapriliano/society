@@ -2,7 +2,7 @@
 
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
-import Container from "@/components/container";
+import Container from "./container";
 
 const Layout = ({ children }: Readonly<{
     children: React.ReactNode;
