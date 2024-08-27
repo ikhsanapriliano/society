@@ -36,4 +36,4 @@ jobs:
 
     - name: Deploy to server
       run: |
-        ssh -v -o StrictHostKeyChecking=no root@vps.ikhsan.com "cd society/client && docker compose down && docker compose pull && docker compose up -d"
+        ssh -v -o StrictHostKeyChecking=no root@203.194.114.235 "cd society/client && touch file.html"
