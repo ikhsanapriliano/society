@@ -8,8 +8,10 @@ import prisma from "../utils/prisma.util";
 import { GenerateToken } from "../utils/jwt.util";
 import { Claims } from "../types/jwt.type";
 
-export const Register = async (payload: RegisterPayload): Promise<void> => {
-    let user = await prisma.user.findUnique({
+export const Register = async (
+    payload: RegisterPayload
+): Promise<LoginResponse> => {
+    const user = await prisma.user.findUnique({
         where: { username: payload.username },
     });
 
@@ -17,43 +19,49 @@ export const Register = async (payload: RegisterPayload): Promise<void> => {
         throw new Error("400:Username already exist.");
     }
 
-    user = await prisma.user.findUnique({
-        where: { email: payload.email },
-    });
-
-    if (user) {
-        throw new Error("400:Email already exist.");
-    }
-
     payload.password = HashPassword(payload.password);
 
-    await prisma.$transaction(async (prisma) => {
+    const profile = await prisma.$transaction(async (prisma) => {
         const { id } = await prisma.user.create({
             data: {
                 username: payload.username,
-                email: payload.email,
                 password: payload.password,
             },
         });
 
-        await prisma.profile.create({
+        const profile = await prisma.profile.create({
             data: {
                 photo: "/profile.jpg",
                 userId: id,
                 bio: "",
             },
         });
+
+        return profile;
     });
+
+    const claims: Claims = {
+        userId: profile.userId,
+        photo: profile.photo,
+        isVerified: profile.bio !== "" ? true : false,
+    };
+    const token = GenerateToken(claims);
+
+    const result: LoginResponse = {
+        token,
+    };
+
+    return result;
 };
 
 export const Login = async (payload: LoginPayload): Promise<LoginResponse> => {
     const user = await prisma.user.findUnique({
-        where: { email: payload.email },
+        where: { username: payload.username },
         include: { profile: true },
     });
 
     if (!user) {
-        throw new Error("400:Email not found.");
+        throw new Error("400:Username not found.");
     }
 
     const isPasswordValid = ComparePassword(payload.password, user.password);
@@ -61,7 +69,11 @@ export const Login = async (payload: LoginPayload): Promise<LoginResponse> => {
         throw new Error("400:Incorrect password.");
     }
 
-    const claims: Claims = { userId: user.id, photo: user.profile?.photo };
+    const claims: Claims = {
+        userId: user.id,
+        photo: user.profile?.photo,
+        isVerified: user.profile?.bio !== "" ? true : false,
+    };
     const token = GenerateToken(claims);
 
     const result: LoginResponse = {

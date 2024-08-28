@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation"
 import { FormEvent, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { AnimatePresence, motion } from "framer-motion"
-import RoomCard from "../chat/roomcard"
+import RoomCard from "../chat/RoomCard"
 
 const HistoryChat = () => {
     const [inputs, setInputs] = useState({ value: "", isUnread: false })

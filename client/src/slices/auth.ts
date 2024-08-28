@@ -4,12 +4,14 @@ export interface AuthState {
     token: string | undefined;
     userId: string | null;
     photo: string | null;
+    isVerified: boolean;
 }
 
 const initialState: AuthState = {
     token: undefined,
     userId: null,
     photo: null,
+    isVerified: false,
 };
 
 const authSlice = createSlice({
@@ -20,6 +22,7 @@ const authSlice = createSlice({
             state.token = action.payload.token;
             state.userId = action.payload.userId;
             state.photo = action.payload.photo;
+            state.isVerified = action.payload.isVerified;
         },
         clearAuth: (state) => {
             state.token = "";

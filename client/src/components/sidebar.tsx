@@ -2,27 +2,41 @@
 
 import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
-import Register from "./auth/register"
-import Login from "./auth/login"
-import HistoryChat from "./dashboard/history"
-import Dashboard from "./dashboard"
+import Register from "./auth/Register"
+import Login from "./auth/Login"
+import HistoryChat from "./dashboard/History"
+import DashboardContainer from "./dashboard/DashboardContainer"
 import React from "react"
-import People from "./dashboard/people"
-import Profile from "./dashboard/profile"
+import People from "./dashboard/People"
+import Profile from "./dashboard/Profile"
 import { usePathname } from "next/navigation"
-import PeopleDetail from "./dashboard/peopledetail"
+import PeopleDetail from "./dashboard/PeopleDetail"
+import AuthContainer from "./auth/AuthContainer"
+import CompleteBio from "./auth/CompleteBio"
 
 const Sidebar = () => {
-  const userId = useSelector((state: RootState) => state.auth.userId)
+  const { userId, isVerified } = useSelector((state: RootState) => state.auth)
   const pathname = usePathname()
 
   const renderAuthComponent = () => {
+    let component: React.JSX.Element
+
     switch (pathname) {
+      case "/complete-bio":
+        component = <CompleteBio />
+        break
       case "/register":
-        return <Register />
+        component = <Register />
+        break
       default:
-        return <Login />
+        component = <Login />
     }
+
+    return (
+      <AuthContainer>
+        {component}
+      </AuthContainer>
+    )
   }
 
   const renderDashboardComponent = () => {
@@ -44,16 +58,16 @@ const Sidebar = () => {
     }
 
     return (
-      <Dashboard>
+      <DashboardContainer>
         {component}
-      </Dashboard>
+      </DashboardContainer>
     )
   }
 
   return (
     <aside className="bg-second w-[35%] z-50">
       {
-        userId ?
+        (userId && isVerified) ?
           renderDashboardComponent()
           :
           renderAuthComponent()

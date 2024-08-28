@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
-const Dashboard = ({ children }: Readonly<{
+const DashboardContainer = ({ children }: Readonly<{
     children: React.ReactNode;
 }>) => {
     const dispatch = useDispatch()
@@ -50,4 +50,4 @@ const Dashboard = ({ children }: Readonly<{
     )
 }
 
-export default Dashboard
+export default DashboardContainer
