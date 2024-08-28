@@ -3,6 +3,7 @@ import { UpdateBioPayload, UpdatePhotoPayload } from "../types/user.type";
 import { NewResponse } from "../utils/response.util";
 import {
     Delete,
+    FindById,
     FindMany,
     UpdateBio,
     UpdatePhoto,
@@ -11,6 +12,21 @@ import {
     UpdateBioValidation,
     UpdatePhotoValidation,
 } from "../validations/user.validation";
+
+export const FindByIdHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<Response | undefined> => {
+    try {
+        const userId: string = res.locals.userId;
+
+        const data = await FindById(userId);
+        return NewResponse(res, 200, data);
+    } catch (error) {
+        next(error);
+    }
+};
 
 export const FindManyHandler = async (
     req: Request,

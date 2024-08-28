@@ -29,8 +29,11 @@ const authSlice = createSlice({
             state.userId = "";
             state.photo = "";
         },
+        setPhoto: (state, action: PayloadAction<string>) => {
+            state.photo = action.payload;
+        },
     },
 });
 
-export const { setAuth, clearAuth } = authSlice.actions;
+export const { setAuth, clearAuth, setPhoto } = authSlice.actions;
 export default authSlice.reducer;

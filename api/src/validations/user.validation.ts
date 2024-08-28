@@ -5,10 +5,9 @@ export const UpdatePhotoValidation = (
     payload: UpdatePhotoPayload
 ): Joi.ValidationResult<UpdatePhotoPayload> => {
     const schema = Joi.object({
-        photo: Joi.string().trim().uri().required().messages({
+        photo: Joi.string().trim().required().messages({
             "string.empty": "Photo is required.",
             "any.required": "Photo is required.",
-            "string.uri": "Photo is not valid.",
         }),
     });
 

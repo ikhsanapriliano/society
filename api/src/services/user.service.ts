@@ -40,6 +40,22 @@ export const FindMany = async (username?: string): Promise<UserResponse[]> => {
     return data;
 };
 
+export const FindById = async (userId: string): Promise<UserResponse> => {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        include: { profile: true },
+    });
+
+    const response: UserResponse = {
+        id: user!.id,
+        username: user!.username,
+        photo: user!.profile!.photo,
+        bio: user!.profile!.bio,
+    };
+
+    return response;
+};
+
 export const UpdatePhoto = async (
     userId: string,
     payload: UpdatePhotoPayload
