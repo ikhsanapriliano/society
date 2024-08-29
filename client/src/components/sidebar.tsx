@@ -2,17 +2,20 @@
 
 import { useSelector } from "react-redux"
 import { RootState } from "@/store/store"
-import Register from "./auth/Register"
-import Login from "./auth/Login"
-import HistoryChat from "./dashboard/History"
+
 import DashboardContainer from "./dashboard/DashboardContainer"
 import React from "react"
-import People from "./dashboard/People"
-import Profile from "./dashboard/Profile"
+
 import { usePathname } from "next/navigation"
-import PeopleDetail from "./dashboard/PeopleDetail"
+
 import AuthContainer from "./auth/AuthContainer"
 import CompleteBio from "./auth/CompleteBio"
+import Register from "./auth/register"
+import Login from "./auth/login"
+import People from "./dashboard/People"
+import Profile from "./dashboard/Profile"
+import PeopleDetail from "./dashboard/PeopleDetail"
+import HistoryChat from "./dashboard/History"
 
 const Sidebar = () => {
   const { userId, isVerified } = useSelector((state: RootState) => state.auth)
