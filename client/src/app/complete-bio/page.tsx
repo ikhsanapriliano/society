@@ -9,8 +9,7 @@ const Home = () => {
         <Image src={"/comments-solid.svg"} width={0} height={0} sizes="100vw" alt="logo" className="w-full h-auto" />
       </div>
       <h1 className="font-black text-[32px] mt-10">welcome to society</h1>
-      <p className="font-extralight mt-1">dive into the darkness of communication with society,<br />
-        where your conversations linger and secrets are whispered</p>
+      <p className="font-extralight mt-1">Dive into the darkness of communication with society.</p>
     </section>
   )
 }

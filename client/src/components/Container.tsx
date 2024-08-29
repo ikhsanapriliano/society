@@ -96,7 +96,7 @@ const Container = ({ children }: Readonly<{
                         :
                         <>
                             <Sidebar />
-                            <main className="bg-first w-[65%]">
+                            <main className={`bg-first w-full md:w-[65%] ${pahtname.includes("/chats") ? "inline-block" : "hidden md:inline-block"}`}>
                                 {children}
                             </main>
                         </>

@@ -65,7 +65,7 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className="bg-second w-[35%] z-50">
+    <aside className={`bg-second w-full md:w-[35%] z-50 ${pathname.includes("/chats") ? "hidden md:inline-block" : "inline-block"}`}>
       {
         (userId && isVerified) ?
           renderDashboardComponent()

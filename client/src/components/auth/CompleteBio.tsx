@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { AuthState, setAuth } from "@/slices/auth"
-import { JwtClaims, LoginPayload, LoginResponse } from "@/types/auth"
-import { patch, post } from "@/utils/axios"
+import { JwtClaims, LoginResponse } from "@/types/auth"
+import { patch } from "@/utils/axios"
 import { jwtDecode } from "jwt-decode"
 import { FormEvent, useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
@@ -12,6 +12,7 @@ import { wsUrl } from "@/utils/constants"
 import { useRouter } from "next/navigation"
 import { BioPayload } from "@/types/profile"
 import Loading from "@/app/loading"
+import { motion } from "framer-motion"
 
 const CompleteBio = () => {
     const dispatch = useDispatch()
@@ -73,8 +74,7 @@ const CompleteBio = () => {
                 }
             }
             dispatch(setSocket(ws))
-
-            setIsLoading(false)
+            router.push("/")
         } catch (error: Error | unknown) {
             const message = handleError(error, dispatch) as string
             setError({ isError: true, message })
@@ -88,7 +88,10 @@ const CompleteBio = () => {
                 isChecking ?
                     <Loading />
                     :
-                    <form onSubmit={(e) => { handleSubmit(e) }} className="px-5 w-full">
+                    <motion.form
+                        initial={{ opacity: 0, y: -50 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        onSubmit={(e) => { handleSubmit(e) }} className="px-5 w-full">
                         <h2 className="font-semibold text-[20px]">Complete Your Bio</h2>
                         <div className="flex flex-col mt-5">
                             <textarea value={bio} onChange={(e) => { setBio(e.target.value) }} placeholder="Wandering through shadows" className="resize-none rounded-md bg-third p-3" rows={4}></textarea>
@@ -102,7 +105,7 @@ const CompleteBio = () => {
                                     "Submit"
                             }
                         </button>
-                    </form>
+                    </motion.form>
             }
         </section>
     )

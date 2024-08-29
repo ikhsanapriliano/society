@@ -20,7 +20,7 @@ const PeopleDetail = () => {
 
     return (
         <AnimatePresence>
-            <section className="p-5 w-full h-full">
+            <section className="px-5 py-10 md:p-5 w-full h-full">
                 <h2 className="font-semibold text-[20px]">People</h2>
                 <motion.div
                     initial={{ y: 100, opacity: 0 }}

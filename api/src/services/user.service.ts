@@ -8,11 +8,10 @@ import {
 import { GenerateToken } from "../utils/jwt.util";
 import prisma from "../utils/prisma.util";
 
-export const FindMany = async (username?: string): Promise<UserResponse[]> => {
-    if (username === undefined) {
-        return [];
-    }
-
+export const FindMany = async (
+    username?: string,
+    bio?: string
+): Promise<UserResponse[]> => {
     const users = await prisma.user.findMany({
         where: {
             username: {
@@ -22,6 +21,8 @@ export const FindMany = async (username?: string): Promise<UserResponse[]> => {
             profile: {
                 bio: {
                     not: "",
+                    contains: bio,
+                    mode: "insensitive",
                 },
             },
         },

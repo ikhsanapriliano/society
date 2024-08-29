@@ -1,11 +1,11 @@
 import { useDispatch } from "react-redux"
-import { motion } from "framer-motion"
 import { FormEvent, useState } from "react"
 import { handleError } from "@/utils/error"
 import { post } from "@/utils/axios"
 import { LoginResponse, RegisterPayload } from "@/types/auth"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { motion } from "framer-motion"
 
 const Register = () => {
     const dispatch = useDispatch()
@@ -39,7 +39,10 @@ const Register = () => {
     }
 
     return (
-        <section className="h-full flex justify-center items-center w-full">
+        <motion.section
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="h-full flex justify-center items-center w-full">
             <form onSubmit={(e) => { handleSubmit(e) }} className="px-5 w-full">
                 <h2 className="font-bold text-[20px]">Register First</h2>
                 <div className="flex flex-col mt-5">
@@ -69,7 +72,7 @@ const Register = () => {
                     </span>
                 </div>
             </form>
-        </section>
+        </motion.section>
     )
 }
 

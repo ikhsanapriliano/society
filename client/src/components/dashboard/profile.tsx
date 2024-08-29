@@ -14,6 +14,7 @@ import ReactCrop, { type Crop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import Image from "next/image"
 import { deleteFile, saveFile } from "@/utils/firebase"
+import { AnimatePresence, motion } from "framer-motion"
 
 const Profile = () => {
     const dispatch = useDispatch()
@@ -67,7 +68,7 @@ const Profile = () => {
             const data = await patch<PhotoPayload, LoginResponse>("/users/photo", token, payload) as LoginResponse
             const newToken = data.token
             localStorage.setItem("token", newToken)
-            if (!oldPhoto.startsWith("/ava")) {
+            if (!oldPhoto.startsWith("/ava") && !oldPhoto.startsWith("/profile")) {
                 await deleteFile(oldPhoto)
             }
             dispatch(setPhoto(link ? link : user!.photo))
@@ -136,7 +137,7 @@ const Profile = () => {
     }
 
     return (
-        <section className="p-5 w-full h-full overflow-auto">
+        <section className="px-5 py-10 md:p-5 w-full h-full overflow-hidden">
             <h2 className="font-semibold text-[20px] mb-5">Profile</h2>
             {
                 isLoading ?
@@ -173,38 +174,54 @@ const Profile = () => {
                                     <button onClick={() => { setPhotoEdit(prev => ({ ...prev, isEdit: true })) }} className="absolute right-0 bottom-0 bg-gray-700 hover:bg-gray-600 duration-200 w-[50px] h-[50px] rounded-full"><i className="fa-solid fa-pencil"></i></button>
                             }
                         </div>
-                        {
-                            photoEdit.isEdit &&
-                            <div className="grid grid-cols-4 gap-3 w-fit mx-auto mt-5">
-                                {
-                                    avatars.map((item, index) => (
-                                        <button key={index} onClick={() => { setUser(prev => ({ ...prev!, photo: item })) }} className="w-[40px] h-[40px] rounded-full overflow-hidden hover:scale-110 duration-200">
-                                            <Image src={item} alt={"photo"} width={0} height={0} sizes="100vw" className="w-full h-auto" />
-                                        </button>
-                                    ))
-                                }
-                                <label htmlFor="plus-image" className="w-[40px] h-[40px] flex justify-center items-center cursor-pointer rounded-full overflow-hidden bg-fifth hover:scale-110 duration-200 relative">
-                                    <i className="fa-solid fa-plus"></i>
-                                </label>
-                                <input onChange={(e) => { handleFile(e) }} type="file" accept="image/*" id="plus-image" hidden />
-                            </div>
-                        }
+                        <AnimatePresence>
+                            {
+                                photoEdit.isEdit &&
+                                <motion.div
+                                    initial={{ opacity: 0, y: -50 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="grid grid-cols-4 gap-3 w-fit mx-auto mt-5">
+                                    {
+                                        avatars.map((item, index) => (
+                                            <button key={index} onClick={() => { setUser(prev => ({ ...prev!, photo: item })) }} className="w-[40px] h-[40px] rounded-full overflow-hidden hover:scale-110 duration-200">
+                                                <Image src={item} alt={"photo"} width={0} height={0} sizes="100vw" className="w-full h-auto" />
+                                            </button>
+                                        ))
+                                    }
+                                    <label htmlFor="plus-image" className="w-[40px] h-[40px] flex justify-center items-center cursor-pointer rounded-full overflow-hidden bg-fifth hover:scale-110 duration-200 relative">
+                                        <i className="fa-solid fa-plus"></i>
+                                    </label>
+                                    <input onChange={(e) => { handleFile(e) }} type="file" accept="image/*" id="plus-image" hidden />
+                                </motion.div>
+                            }
+                        </AnimatePresence>
                         <div className="p-5 flex flex-col">
                             <p className="text-center">username</p>
                             <p className="text-center font-semibold">{user!.username}</p>
-                            <div className="flex justify-between mt-5">
-                                <p>bio</p>
+                            <AnimatePresence>
                                 {
-                                    bioEdit.isEdit ?
-                                        bioEdit.isLoading ?
-                                            <button><i className="fa-solid fa-spinner fa-spin"></i></button>
-                                            :
-                                            <button onClick={() => { handleEditBio() }}><i className="fa-solid fa-check"></i></button>
-                                        :
-                                        <button onClick={() => { setBioEdit(prev => ({ ...prev, isEdit: true })) }}><i className="fa-solid fa-pencil"></i></button>
+                                    !photoEdit.isEdit &&
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 50 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 50 }}
+                                    >
+                                        <div className="flex justify-between mt-5">
+                                            <p>bio</p>
+                                            {
+                                                bioEdit.isEdit ?
+                                                    bioEdit.isLoading ?
+                                                        <button><i className="fa-solid fa-spinner fa-spin"></i></button>
+                                                        :
+                                                        <button onClick={() => { handleEditBio() }}><i className="fa-solid fa-check"></i></button>
+                                                    :
+                                                    <button onClick={() => { setBioEdit(prev => ({ ...prev, isEdit: true })) }}><i className="fa-solid fa-pencil"></i></button>
+                                            }
+                                        </div>
+                                        <textarea value={user!.bio} onChange={(e) => { setUser(prev => ({ ...prev!, bio: e.target.value })) }} rows={4} className="resize-none bg-first rounded-md p-3 mt-2 w-full" readOnly={bioEdit.isEdit ? false : true} disabled={bioEdit.isEdit ? false : true}></textarea>
+                                    </motion.div>
                                 }
-                            </div>
-                            <textarea value={user!.bio} onChange={(e) => { setUser(prev => ({ ...prev!, bio: e.target.value })) }} rows={4} className="resize-none bg-first rounded-md p-3 mt-2" readOnly={bioEdit.isEdit ? false : true} disabled={bioEdit.isEdit ? false : true}></textarea>
+                            </AnimatePresence>
                             {error.isError && <p className="text-red-500 mt-2 text-end">{error.message}</p>}
                         </div>
                     </>

@@ -10,6 +10,7 @@ import { RegisterWebsocket, WebsocketMessage, WebsocketMessageRead } from "@/typ
 import { setIsRead, setMessage, setSocket, setUsers } from "@/slices/websocket"
 import { wsUrl } from "@/utils/constants"
 import { useRouter } from "next/navigation"
+import { motion } from "framer-motion"
 
 const Login = () => {
     const dispatch = useDispatch()
@@ -76,7 +77,10 @@ const Login = () => {
     }
 
     return (
-        <section className="h-full flex justify-center items-center w-full">
+        <motion.section
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="h-full flex justify-center items-center w-full">
             <form onSubmit={(e) => { handleSubmit(e) }} className="px-5 w-full">
                 <h2 className="font-semibold text-[20px]">Login First</h2>
                 <div className="flex flex-col mt-5">
@@ -102,7 +106,7 @@ const Login = () => {
                     </span>
                 </div>
             </form>
-        </section>
+        </motion.section>
     )
 }
 

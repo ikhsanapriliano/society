@@ -5,8 +5,8 @@ const AuthContainer = ({ children }: Readonly<{
 }>) => {
     return (
         <motion.div
-            className="p-14 h-full bg-second">
-            <h1 className="font-bold text-[24px]">society</h1>
+            className="px-5 py-10 md:p-14 h-full bg-second">
+            <h1 className="font-bold text-[24px] px-5 md:px-0">society</h1>
             {children}
         </motion.div>
     )

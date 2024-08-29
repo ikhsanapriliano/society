@@ -35,8 +35,9 @@ export const FindManyHandler = async (
 ): Promise<Response | undefined> => {
     try {
         const username = req.query.username as string | undefined;
+        const bio = req.query.bio as string | undefined;
 
-        const data = await FindMany(username);
+        const data = await FindMany(username, bio);
         return NewResponse(res, 200, data);
     } catch (error) {
         next(error);
