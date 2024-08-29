@@ -1,5 +1,5 @@
 export interface LoginPayload {
-    email: string;
+    username: string;
     password: string;
 }
 
@@ -10,11 +10,11 @@ export interface LoginResponse {
 export interface JwtClaims {
     userId: string;
     photo: string;
+    isVerified: boolean;
 }
 
 export interface RegisterPayload {
     username: string;
-    email: string;
     password: string;
     confirmPassword: string;
 }

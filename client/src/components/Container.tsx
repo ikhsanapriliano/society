@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Sidebar from "@/components/sidebar";
+import Sidebar from "@/components/Sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useEffect, useState } from "react";
@@ -46,8 +46,13 @@ const Container = ({ children }: Readonly<{
                 return
             }
 
-            const { userId, photo }: JwtClaims = jwtDecode(token)
-            const payload: AuthState = { token, userId, photo }
+            const { userId, photo, isVerified }: JwtClaims = jwtDecode(token)
+            if (!isVerified) {
+                router.push("/complete-bio")
+                return
+            }
+
+            const payload: AuthState = { token, userId, photo, isVerified }
             dispatch(setAuth(payload))
 
             const ws = new WebSocket(wsUrl as string)
@@ -91,7 +96,7 @@ const Container = ({ children }: Readonly<{
                         :
                         <>
                             <Sidebar />
-                            <main className="bg-first w-[65%]">
+                            <main className={`bg-first w-full md:w-[65%] ${pahtname.includes("/chats") ? "inline-block" : "hidden md:inline-block"}`}>
                                 {children}
                             </main>
                         </>
