@@ -1,8 +1,32 @@
 import { NextFunction, Request, Response } from "express";
-import { UpdateUserPayload } from "../types/user.type";
+import { UpdateBioPayload, UpdatePhotoPayload } from "../types/user.type";
 import { NewResponse } from "../utils/response.util";
-import { Delete, FindMany, Update } from "../services/user.service";
-import { UpdateUserValidation } from "../validations/user.validation";
+import {
+    Delete,
+    FindById,
+    FindMany,
+    UpdateBio,
+    UpdatePhoto,
+} from "../services/user.service";
+import {
+    UpdateBioValidation,
+    UpdatePhotoValidation,
+} from "../validations/user.validation";
+
+export const FindByIdHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<Response | undefined> => {
+    try {
+        const userId: string = res.locals.userId;
+
+        const data = await FindById(userId);
+        return NewResponse(res, 200, data);
+    } catch (error) {
+        next(error);
+    }
+};
 
 export const FindManyHandler = async (
     req: Request,
@@ -11,29 +35,48 @@ export const FindManyHandler = async (
 ): Promise<Response | undefined> => {
     try {
         const username = req.query.username as string | undefined;
-        const email = req.query.email as string | undefined;
+        const bio = req.query.bio as string | undefined;
 
-        const data = await FindMany(username, email);
+        const data = await FindMany(username, bio);
         return NewResponse(res, 200, data);
     } catch (error) {
         next(error);
     }
 };
 
-export const UpdateHandler = async (
+export const UpdatePhotoHandler = async (
     req: Request,
     res: Response,
     next: NextFunction
 ): Promise<Response | undefined> => {
     try {
         const userId: string = res.locals.userId;
-        const payload: UpdateUserPayload = req.body;
+        const payload: UpdatePhotoPayload = req.body;
 
-        const { value, error } = UpdateUserValidation(payload);
+        const { value, error } = UpdatePhotoValidation(payload);
         if (error !== undefined) throw new Error(`400:${error.message}`);
 
-        await Update(userId, value);
-        return NewResponse(res, 200);
+        const data = await UpdatePhoto(userId, value);
+        return NewResponse(res, 200, data);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const UpdateBioHandler = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<Response | undefined> => {
+    try {
+        const userId: string = res.locals.userId;
+        const payload: UpdateBioPayload = req.body;
+
+        const { value, error } = UpdateBioValidation(payload);
+        if (error !== undefined) throw new Error(`400:${error.message}`);
+
+        const data = await UpdateBio(userId, value);
+        return NewResponse(res, 200, data);
     } catch (error) {
         next(error);
     }

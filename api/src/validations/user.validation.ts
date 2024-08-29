@@ -1,18 +1,27 @@
 import Joi from "joi";
-import { UpdateUserPayload } from "../types/user.type";
+import { UpdateBioPayload, UpdatePhotoPayload } from "../types/user.type";
 
-export const UpdateUserValidation = (
-    payload: UpdateUserPayload
-): Joi.ValidationResult<UpdateUserPayload> => {
+export const UpdatePhotoValidation = (
+    payload: UpdatePhotoPayload
+): Joi.ValidationResult<UpdatePhotoPayload> => {
     const schema = Joi.object({
-        photo: Joi.string().trim().uri().required().messages({
+        photo: Joi.string().trim().required().messages({
             "string.empty": "Photo is required.",
             "any.required": "Photo is required.",
-            "string.uri": "Photo is not valid.",
         }),
-        bio: Joi.string().trim().required().messages({
+    });
+
+    return schema.validate(payload);
+};
+
+export const UpdateBioValidation = (
+    payload: UpdateBioPayload
+): Joi.ValidationResult<UpdateBioPayload> => {
+    const schema = Joi.object({
+        bio: Joi.string().trim().max(50).required().messages({
             "string.empty": "Bio is required.",
             "any.required": "Bio is required.",
+            "string.max": "Bio max 50 chars length.",
         }),
     });
 

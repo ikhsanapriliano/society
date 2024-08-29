@@ -20,7 +20,7 @@ const PeopleDetail = () => {
 
     return (
         <AnimatePresence>
-            <section className="p-5 w-full h-full">
+            <section className="px-5 py-10 md:p-5 w-full h-full">
                 <h2 className="font-semibold text-[20px]">People</h2>
                 <motion.div
                     initial={{ y: 100, opacity: 0 }}
@@ -32,7 +32,7 @@ const PeopleDetail = () => {
                     </div>
                     <p className="font-semibold mt-5">{user.username}{user.id === userId ? " (me)" : ""}</p>
                     <p className="text-[14px]">{user.email}</p>
-                    <p className="font-light text-[14px] p-10 max-h-[150px] w-full overflow-hidden">{user.bio === "" ? "-" : user.bio}</p>
+                    <p className="font-light text-[14px] w-full break-words px-7 pt-5 pb-7">{user.bio}</p>
                     {user.id !== userId && <Link href={"/chats"} className="w-[150px] h-[40px] border border-third rounded-md hover:bg-first duration-150 flex justify-center items-center">message</Link>}
                     <Link href={"/people"} className="w-[150px] h-[40px] bg-red-600 rounded-md hover:opacity-70 duration-150 flex justify-center items-center mt-3">back</Link>
                 </motion.div>

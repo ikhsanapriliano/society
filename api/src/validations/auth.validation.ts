@@ -5,20 +5,28 @@ export const RegisterValidation = (
     payload: RegisterPayload
 ): Joi.ValidationResult<RegisterPayload> => {
     const schema = Joi.object({
-        username: Joi.string().trim().required().messages({
-            "string.empty": "Username is required.",
-            "any.required": "Username is required.",
-        }),
-        email: Joi.string().trim().lowercase().email().required().messages({
-            "string.empty": "Email is required.",
-            "any.required": "Email is required.",
-            "string.email": "Email is not valid",
-        }),
-        password: Joi.string().trim().min(8).required().messages({
-            "string.empty": "Password is required.",
-            "any.required": "Password is required.",
-            "string.min": "Password must be at least 8 characters.",
-        }),
+        username: Joi.string()
+            .trim()
+            .required()
+            .max(10)
+            .pattern(/^\S+$/)
+            .messages({
+                "string.empty": "Username is required.",
+                "any.required": "Username is required.",
+                "string.pattern.base": "Username cannot contain spaces.",
+                "string.max": "Username max 10 chars length.",
+            }),
+        password: Joi.string()
+            .trim()
+            .min(8)
+            .required()
+            .pattern(/^\S+$/)
+            .messages({
+                "string.empty": "Password is required.",
+                "any.required": "Password is required.",
+                "string.min": "Password must be at least 8 characters.",
+                "string.pattern.base": "Password cannot contain spaces.",
+            }),
         confirmPassword: Joi.string()
             .trim()
             .min(8)
@@ -39,10 +47,9 @@ export const LoginValidation = (
     payload: LoginPayload
 ): Joi.ValidationResult<LoginPayload> => {
     const schema = Joi.object({
-        email: Joi.string().trim().lowercase().email().required().messages({
-            "string.empty": "Email is required.",
-            "any.required": "Email is required.",
-            "string.email": "Email is not valid",
+        username: Joi.string().trim().lowercase().required().messages({
+            "string.empty": "Username is required.",
+            "any.required": "Username is required.",
         }),
         password: Joi.string().trim().min(8).required().messages({
             "string.empty": "Password is required.",

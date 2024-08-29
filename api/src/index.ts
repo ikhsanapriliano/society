@@ -78,15 +78,14 @@ try {
         });
 
         ws.on("close", () => {
-            const newClients: { id: string; ws: WebSocket }[] = [];
+            clients = clients.filter(
+                (item) => item.ws.readyState === WebSocket.OPEN
+            );
+            const users: string[] = [];
             clients.forEach((item) => {
-                if (item.ws != ws) {
-                    newClients.push(item);
-                }
+                users.push(item.id);
             });
 
-            clients = newClients;
-            const users: string[] = clients.map((item) => item.id);
             console.log("online", users);
 
             clients.forEach((client) => {

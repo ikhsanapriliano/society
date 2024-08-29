@@ -1,12 +1,11 @@
 export interface RegisterPayload {
     username: string;
-    email: string;
     password: string;
     confirmPassword: string;
 }
 
 export interface LoginPayload {
-    email: string;
+    username: string;
     password: string;
 }
 

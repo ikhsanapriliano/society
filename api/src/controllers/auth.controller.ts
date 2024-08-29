@@ -17,8 +17,8 @@ export const RegisterHandler = async (
         const { value, error } = RegisterValidation(payload);
         if (error !== undefined) throw new Error(`400:${error.message}`);
 
-        await Register(value);
-        return NewResponse(res, 201);
+        const data = await Register(value);
+        return NewResponse(res, 201, data);
     } catch (error) {
         next(error);
     }

@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation"
 import { FormEvent, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { AnimatePresence, motion } from "framer-motion"
-import RoomCard from "../chat/roomcard"
+import RoomCard from "../chat/RoomCard"
 
 const HistoryChat = () => {
     const [inputs, setInputs] = useState({ value: "", isUnread: false })
@@ -82,7 +82,7 @@ const HistoryChat = () => {
     }
 
     return (
-        <section className="p-5 w-full h-[90%] flex flex-col">
+        <section className="px-5 pt-10 md:p-5 w-full h-[90%] flex flex-col">
             <h2 className="font-semibold text-[20px]">Chats</h2>
             <form onSubmit={(e) => { fetchRooms(e) }}>
                 <div className="relative mt-5">

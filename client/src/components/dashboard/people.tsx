@@ -79,7 +79,7 @@ const People = () => {
     }
 
     return (
-        <section className="w-full h-[90%] overflow-hidden p-5 flex flex-col relative">
+        <section className="w-full h-full md:h-[90%] overflow-hidden px-5 pt-10 md:p-5 flex flex-col relative">
             <h2 className="font-semibold text-[20px]">People</h2>
             <form onSubmit={(e) => { handleSearch(e) }} className="mt-5">
                 <div className="relative">
@@ -88,7 +88,7 @@ const People = () => {
                 </div>
                 <div className="flex gap-3 mt-3">
                     <button onClick={() => { setInputs(prev => ({ ...prev, type: "username" })) }} type="submit" className={`${inputs.type === "username" ? "bg-fifth" : "border border-third"} px-5 py-1 rounded-md`}>username</button>
-                    <button onClick={() => { setInputs(prev => ({ ...prev, type: "email" })) }} type="submit" className={`${inputs.type === "email" ? "bg-fifth" : "border border-third"} px-5 py-1 rounded-md`}>email</button>
+                    <button onClick={() => { setInputs(prev => ({ ...prev, type: "bio" })) }} type="submit" className={`${inputs.type === "bio" ? "bg-fifth" : "border border-third"} px-5 py-1 rounded-md`}>bio</button>
                 </div>
             </form>
             <div className="flex-grow overflow-y-auto overflow-x-hidden mt-5">
@@ -113,9 +113,9 @@ const People = () => {
                                                 </div>
                                                 {item.isOnline && <div className="absolute top-[-5px] right-[-5px] w-[20px] h-[20px] bg-green-500 rounded-full"></div>}
                                             </div>
-                                            <div className="text-white w-full">
+                                            <div className="text-white w-full overflow-hidden">
                                                 <p className="text-lg font-semibold">{item.username}</p>
-                                                <p className="text-sm font-light">{item.email}</p>
+                                                <p className="text-sm font-light whitespace-nowrap w-full overflow-ellipsis overflow-hidden">{item.bio}</p>
                                             </div>
                                         </motion.button>
                                     ))

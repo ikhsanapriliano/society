@@ -14,6 +14,7 @@ import { ChangeEvent, FormEvent, KeyboardEvent, useEffect, useRef, useState } fr
 import { useDispatch, useSelector } from "react-redux"
 import { motion } from "framer-motion"
 import { setIsRead } from "@/slices/websocket"
+import Link from "next/link"
 
 const Page = () => {
     const roomId = usePathname().split("/")[2]
@@ -29,19 +30,19 @@ const Page = () => {
     const textRef = useRef<HTMLTextAreaElement>(null)
     const [isSending, setIsSending] = useState(false)
     const online = useSelector((state: RootState) => state.websocket.users)
-    const secondUser = sessionStorage.getItem("secodnUser")
+    const secondUser = sessionStorage.getItem("secondUser")
 
     useEffect(() => {
-        if (room !== undefined && isRead === true) {
-            fetchRoom().then(() => {
-                dispatch(setIsRead(false))
-            })
-        }
+        fetchRoom().then(() => {
+            dispatch(setIsRead(false))
+        })
     }, [isRead])
 
     useEffect(() => {
         updateRead().then(() => {
-            fetchRoom()
+            fetchRoom().then(() => {
+                textRef.current?.focus()
+            })
         })
     }, [data])
 
@@ -69,11 +70,10 @@ const Page = () => {
 
             const wsPayload: WebsocketMessageRead = {
                 sender: userId!,
-                receiver: room ? room.secondUser.id : secondUser as string,
+                receiver: secondUser as string,
                 isRead: true,
             }
 
-            if (secondUser) sessionStorage.removeItem("secondUser")
             socket?.send(JSON.stringify(wsPayload))
         } catch (error) {
             handleError(error, dispatch)
@@ -181,6 +181,7 @@ const Page = () => {
                         animate={{ opacity: 1, x: 0 }}
                         className="flex flex-col justify-between h-full">
                         <header className="h-[10%] 2xl:max-h-[100px] py-2 px-5 flex items-center gap-5 bg-third">
+                            <Link href={"/"} className="inline-block md:hidden"><i className="fa-solid fa-arrow-left"></i></Link>
                             <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
                                 <Image src={room!.secondUser.photo} alt="photo" width={0} height={0} sizes="100vw" className="w-full h-auto" />
                             </div>
