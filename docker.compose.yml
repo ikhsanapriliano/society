@@ -17,8 +17,12 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
     networks:
       - society-net
+    depends_on:
+      - certbot
 
   api:
     image: ikhsan816/society-api:latest
@@ -35,6 +39,16 @@ services:
       - PORT=3001
     depends_on:
       - db
+    networks:
+      - society-net
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email ikhsanapriliano4@gmail.com -d society.my.id --agree-tos
     networks:
       - society-net
 
