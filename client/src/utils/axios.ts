@@ -8,7 +8,7 @@ export const post = async <P, R>(
     payload: P
 ): Promise<R | undefined> => {
     try {
-        const result = await axios.post(`${apiUrl}/api${endpoint}`, payload, {
+        const result = await axios.post(`${apiUrl}${endpoint}`, payload, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -30,7 +30,7 @@ export const get = async <R>(
 ): Promise<R | undefined> => {
     try {
         const result = await axios.get(
-            `${apiUrl}/api${endpoint}${query ? `?${query}` : ""}`,
+            `${apiUrl}${endpoint}${query ? `?${query}` : ""}`,
             {
                 headers: { Authorization: `Bearer ${token}` },
             }
@@ -53,7 +53,7 @@ export const patch = async <P, R>(
     payload: P
 ): Promise<R | undefined> => {
     try {
-        const result = await axios.patch(`${apiUrl}/api${endpoint}`, payload, {
+        const result = await axios.patch(`${apiUrl}${endpoint}`, payload, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
