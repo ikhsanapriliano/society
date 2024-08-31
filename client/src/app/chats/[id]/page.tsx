@@ -7,14 +7,14 @@ import { ChatFormat, RoomChatPayload, RoomResponse } from "@/types/chat"
 import { WebsocketMessage, WebsocketMessageRead } from "@/types/websocket"
 import { get, patch, post } from "@/utils/axios"
 import { handleError } from "@/utils/error"
-import { AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { ChangeEvent, FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { setIsRead } from "@/slices/websocket"
 import Link from "next/link"
+import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react"
 
 const Page = () => {
     const roomId = usePathname().split("/")[2]
@@ -31,6 +31,7 @@ const Page = () => {
     const [isSending, setIsSending] = useState(false)
     const online = useSelector((state: RootState) => state.websocket.users)
     const secondUser = sessionStorage.getItem("secondUser")
+    const [isEmoji, setIsEmoji] = useState(false)
 
     useEffect(() => {
         fetchRoom().then(() => {
@@ -114,6 +115,7 @@ const Page = () => {
             const newMessage = message.trim()
 
             if (newMessage == "") {
+                setIsSending(false)
                 return
             }
 
@@ -170,6 +172,10 @@ const Page = () => {
         setMessage(value)
     }
 
+    const handleEmoji = (e: EmojiClickData) => {
+        setMessage(prev => prev + e.emoji)
+    }
+
     return (
         <AnimatePresence>
             {
@@ -179,7 +185,8 @@ const Page = () => {
                     <motion.section
                         initial={{ opacity: 0, x: -300 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="flex flex-col justify-between h-full">
+                        className="flex flex-col justify-between h-full"
+                        onClick={() => { setIsEmoji(false) }}>
                         <header className="h-[10%] 2xl:max-h-[100px] py-2 px-5 flex items-center gap-5 bg-third">
                             <Link href={"/"} className="inline-block md:hidden"><i className="fa-solid fa-arrow-left"></i></Link>
                             <div className="w-[40px] h-[40px] rounded-full overflow-hidden">
@@ -193,7 +200,7 @@ const Page = () => {
                                 </div>
                             </div>
                         </header>
-                        <div ref={containerRef} className="p-5 flex-grow h-[80%] overflow-auto bg-first">
+                        <div ref={containerRef} className="p-5 flex-grow h-[80%] overflow-auto bg-first relative">
                             {
                                 chats.length !== 0 && chats.map((chat, index) => (
                                     <div key={index} className={`flex ${chat.senderId === room!.firstUserId ? "justify-end" : "justify-start"} w-full`}>
@@ -210,10 +217,25 @@ const Page = () => {
                                     </div>
                                 ))
                             }
+                            <AnimatePresence>
+                                {
+                                    isEmoji &&
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0, bottom: 30 }}
+                                        className="fixed overflow-visible z-50 bottom-[12%] 2xl:bottom-[15%]">
+                                        <EmojiPicker onEmojiClick={(e) => { handleEmoji(e) }} />
+                                    </motion.div>
+
+                                }
+                            </AnimatePresence>
                         </div>
-                        <footer className={`${paragraph === 1 ? "h-[10%] 2xl:max-h-[100px]" : "h-fit"} py-5 px-5 flex gap-5 justify-center items-center bg-third`}>
-                            <button><i aria-hidden className="fa-solid fa-face-smile"></i></button>
-                            <button><i aria-hidden className="fa-solid fa-plus"></i></button>
+                        <footer className={`${paragraph === 1 ? "h-[10%] 2xl:max-h-[100px]" : "h-fit"} z-[60] py-5 px-5 flex gap-5 justify-center items-center bg-third`}>
+                            <button onClick={(e) => {
+                                e.stopPropagation()
+                                setIsEmoji(prev => !prev)
+                            }} ><i aria-hidden className="fa-solid fa-face-smile"></i></button>
                             <form onSubmit={(e) => { sendMessage(e) }} className="flex w-full h-full gap-5 justify-center items-center">
                                 <textarea
                                     ref={textRef}
