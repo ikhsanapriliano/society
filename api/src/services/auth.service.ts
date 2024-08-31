@@ -45,7 +45,8 @@ export const Register = async (
         photo: profile.photo,
         isVerified: profile.bio !== "" ? true : false,
     };
-    const token = GenerateToken(claims);
+
+    const token = await GenerateToken(claims);
 
     const result: LoginResponse = {
         token,
@@ -64,7 +65,10 @@ export const Login = async (payload: LoginPayload): Promise<LoginResponse> => {
         throw new Error("400:Username not found.");
     }
 
-    const isPasswordValid = ComparePassword(payload.password, user.password);
+    const isPasswordValid = await ComparePassword(
+        payload.password,
+        user.password
+    );
     if (!isPasswordValid) {
         throw new Error("400:Incorrect password.");
     }
@@ -74,7 +78,7 @@ export const Login = async (payload: LoginPayload): Promise<LoginResponse> => {
         photo: user.profile?.photo,
         isVerified: user.profile?.bio !== "" ? true : false,
     };
-    const token = GenerateToken(claims);
+    const token = await GenerateToken(claims);
 
     const result: LoginResponse = {
         token,

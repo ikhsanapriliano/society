@@ -71,7 +71,7 @@ export const UpdatePhoto = async (
         photo: user.photo,
         isVerified: user.bio !== "" ? true : false,
     };
-    const token = GenerateToken(claims);
+    const token = await GenerateToken(claims);
 
     const result: LoginResponse = {
         token,
@@ -94,7 +94,7 @@ export const UpdateBio = async (
         photo: user.photo,
         isVerified: user.bio !== "" ? true : false,
     };
-    const token = GenerateToken(claims);
+    const token = await GenerateToken(claims);
 
     const result: LoginResponse = {
         token,

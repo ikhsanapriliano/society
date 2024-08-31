@@ -4,6 +4,9 @@ export const HashPassword = (password: string): string => {
     return bcrypt.hashSync(password, 10);
 };
 
-export const ComparePassword = (plain: string, hash: string): boolean => {
+export const ComparePassword = async (
+    plain: string,
+    hash: string
+): Promise<boolean> => {
     return bcrypt.compareSync(plain, hash);
 };
