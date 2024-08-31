@@ -236,7 +236,6 @@ const Page = () => {
                                 e.stopPropagation()
                                 setIsEmoji(prev => !prev)
                             }} ><i aria-hidden className="fa-solid fa-face-smile"></i></button>
-                            <button><i aria-hidden className="fa-solid fa-plus"></i></button>
                             <form onSubmit={(e) => { sendMessage(e) }} className="flex w-full h-full gap-5 justify-center items-center">
                                 <textarea
                                     ref={textRef}
