@@ -52,10 +52,22 @@ export const FindById = async (
         chats: chats.roomChat
             .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
             .map((chat): ChatResponse => {
-                const cHour = chat.createdAt.getHours();
-                const cMinute = chat.createdAt.getMinutes();
-                const uHour = chat.createdAt.getHours();
-                const uMinute = chat.createdAt.getMinutes();
+                const cHour = String(chat.createdAt.getHours()).padStart(
+                    2,
+                    "0"
+                );
+                const cMinute = String(chat.createdAt.getMinutes()).padStart(
+                    2,
+                    "0"
+                );
+                const uHour = String(chat.updatedAt.getHours()).padStart(
+                    2,
+                    "0"
+                );
+                const uMinute = String(chat.updatedAt.getMinutes()).padStart(
+                    2,
+                    "0"
+                );
 
                 const cTime = `${cHour}:${cMinute}`;
                 const uTime = `${uHour}:${uMinute}`;
