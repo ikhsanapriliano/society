@@ -22,6 +22,7 @@
     "joi": "^17.13.3",
     "js": "^0.1.0",
     "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.0",
     "nodemailer": "^6.9.14",
     "websocket": "^1.0.35",
     "winston": "^3.14.2",
